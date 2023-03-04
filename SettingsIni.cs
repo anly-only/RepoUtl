@@ -73,6 +73,7 @@ namespace RepoUtl
             sec = ini.GetSection(Key.Git, "Git settings");
             sec.Set(Key.AutoScanWorktrees, "true", "Automatically scan worktrees and add them into combo list");
 
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             ini.Save(path);
         }
     }
