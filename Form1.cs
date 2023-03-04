@@ -262,6 +262,9 @@ namespace RepoUtl
 
         string GetTargetRoot(string root, bool merge)
         {
+            if (string.IsNullOrEmpty(root))
+                return string.Empty;
+
             var postfix = cbPostfix.Text;
             if (string.IsNullOrWhiteSpace(postfix))
                 postfix = "modified";

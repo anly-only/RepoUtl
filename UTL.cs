@@ -30,6 +30,9 @@ namespace RepoUtl
 
         internal static void Explore(string path, bool select, bool trySingleWindow)
         {
+            if (string.IsNullOrEmpty(path))
+                return;
+
             if (!File.Exists(path) && !Directory.Exists(path))
                 path = UTL.GetExistingFolder(path);
 
