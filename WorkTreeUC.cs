@@ -63,6 +63,7 @@ namespace RepoUtl
             bool mainEN = repo != null && Worktree != null;
             bnAdd.Enabled = mainEN && repo.GetWorkTrees().FindIndex(a => a.Name == Worktree.Name) == -1;
             bnRemove.Enabled = mainEN && !bnAdd.Enabled;
+            tbWorkTree.ReadOnly = !mainEN || bnRemove.Enabled;
             bnExplore.Enabled = bnRemove.Enabled;
             bnSelectWorkTree.Enabled = repo != null;
             bnSelectBranch.Enabled = repo != null;
@@ -335,6 +336,14 @@ namespace RepoUtl
         internal string SaveUI()
         {
             return ControlEx.SaveUI(ParentForm, tbRepo, tbWorkTree);
+        }
+
+        private void tbWorkTree_TextChanged(object sender, EventArgs e)
+        {
+            if (Worktree != null)
+            {
+                Worktree.Name = tbWorkTree.Text;
+            }
         }
     }
 }

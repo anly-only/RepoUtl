@@ -182,7 +182,7 @@ namespace RepoUtl
             if (h is Branch b)
                 Branch = new BranchInfo(b);
         }
-        internal string Name { get; private set; }
+        internal string Name { get; set; }
         internal BranchInfo Branch { get; private set; }
 
         public override string ToString() => Name;
