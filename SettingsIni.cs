@@ -49,13 +49,13 @@ namespace RepoUtl
 
         internal static csutl.ini.IniFile GetIni()
         {
-            var ini = csutl.ini.Factory.Get(IniFileFullName);
+            var ini = csutl.ini.IniFactory.Get(IniFileFullName);
             return ini;
         }
 
         static void CreateIniFile(string path)
         {
-            var ini = csutl.ini.Factory.Get();
+            var ini = csutl.ini.IniFactory.Get();
 
             var sec = ini[Key.Common];
             sec.Set(Key.ShowHelpAtStartup, "true", "true - show help at startup");

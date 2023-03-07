@@ -39,7 +39,7 @@ namespace csutl.ini;
 
 #endif
 
-public static class Factory
+public static class IniFactory
 {
     public static IniFile Get() => new FileImpl();
 

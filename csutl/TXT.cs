@@ -6,9 +6,9 @@ using System.Text;
 
 namespace csutl
 {
-    static class TXT
+    public static class TXT
     {
-        internal static bool SelectWord(string text, int pos, out int begin, out int end)
+        public static bool SelectWord(string text, int pos, out int begin, out int end)
         {
             begin = end = pos;
 
@@ -21,29 +21,29 @@ namespace csutl
             return begin != end;
         }
 
-        internal static string TabsToSpaces(int tab_size)
+        public static string TabsToSpaces(int tab_size)
         {
             string s = string.Empty;
             for (int i = 0; i < tab_size; i++)
                 s += " ";
             return s;
         }
-        internal static string RN_to_N(this string s)
+        public static string RN_to_N(this string s)
         {
             return s.Replace("\r\n", "\n");
         }
 
-        internal static string N_to_RN(this string s)
+        public static string N_to_RN(this string s)
         {
             return s.Replace("\n", "\r\n");
         }
 
-        internal static string to_RN(this string s)
+        public static string to_RN(this string s)
         {
             return s.RN_to_N().N_to_RN();
         }
 
-        internal static char LastChar(this string s)
+        public static char LastChar(this string s)
         {
             char c = '\0';
             if (!string.IsNullOrEmpty(s))
@@ -53,7 +53,7 @@ namespace csutl
             return c;
         }
 
-        internal static int SpacesLength(string s, int pos)
+        public static int SpacesLength(string s, int pos)
         {
             char space = ' ';
             int j = pos + 1;
@@ -63,13 +63,13 @@ namespace csutl
         }
 
         #region convert
-        internal static int[] ToIntArray(string arrayAsString, char separator)
+        public static int[] ToIntArray(string arrayAsString, char separator)
         {
             char[] c = { separator };
             return Array.ConvertAll(arrayAsString.Split(c, StringSplitOptions.RemoveEmptyEntries), int.Parse);
         }
 
-        internal static string ToString(int[] array, char separator)
+        public static string ToString(int[] array, char separator)
         {
             char[] c = { separator };
             return string.Join(",", Array.ConvertAll(array, s => s.ToString()));
@@ -77,7 +77,7 @@ namespace csutl
         #endregion convert
 
         #region search
-        internal static int IndexOf(List<string> list, string s, bool ignoreCase)
+        public static int IndexOf(List<string> list, string s, bool ignoreCase)
         {
             int ix = -1;
             for (int i = 0; ix == -1 && i != list.Count; ++i)
@@ -87,7 +87,7 @@ namespace csutl
             }
             return ix;
         }
-        internal static int LastIndexOf(List<string> list, string s, bool ignoreCase)
+        public static int LastIndexOf(List<string> list, string s, bool ignoreCase)
         {
             int ix = -1;
             for (int i = list.Count - 1; ix == -1 && i != -1; --i)

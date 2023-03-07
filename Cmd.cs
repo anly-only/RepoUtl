@@ -72,7 +72,7 @@ namespace RepoUtl
 
         csutl.ini.IniFile GetIni(string iniPath)
         {
-            var ini = csutl.ini.Factory.Get(iniPath);
+            var ini = csutl.ini.IniFactory.Get(iniPath);
             foreach (var sec in ini.Sections)
                 foreach (var item in sec.Items)
                     item.Value = ApplyMacros(item.Value);
@@ -168,7 +168,7 @@ namespace RepoUtl
 
         internal static void CreateIniFile(string path)
         {
-            var ini = csutl.ini.Factory.Get();
+            var ini = csutl.ini.IniFactory.Get();
 
             var sec = ini.GetSection("");
             sec.Set("", "", "See example commands below");
