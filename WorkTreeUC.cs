@@ -281,7 +281,14 @@ namespace RepoUtl
                 }) as BranchInfo;
 
                 if (o != null)
-                    Worktree = new WorktreeInfo(o);
+                {
+                    var wts = repo.GetWorkTrees();
+                    var w = wts.FirstOrDefault(a => a.Branch.FriendlyName == o.FriendlyName);
+                    if (w != null)
+                        Worktree = w;
+                    else
+                        Worktree = new WorktreeInfo(o);
+                }
             }
             catch (Exception ee)
             {
