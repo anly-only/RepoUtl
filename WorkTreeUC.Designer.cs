@@ -39,13 +39,14 @@
             this.bnSelectRepo = new System.Windows.Forms.Button();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
+            this.lbWorktree = new System.Windows.Forms.Label();
             this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // bnAdd
             // 
             this.bnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnAdd.Location = new System.Drawing.Point(46, 177);
+            this.bnAdd.Location = new System.Drawing.Point(46, 202);
             this.bnAdd.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnAdd.Name = "bnAdd";
             this.bnAdd.Size = new System.Drawing.Size(155, 36);
@@ -56,7 +57,7 @@
             // 
             // bnRemove
             // 
-            this.bnRemove.Location = new System.Drawing.Point(252, 177);
+            this.bnRemove.Location = new System.Drawing.Point(252, 202);
             this.bnRemove.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnRemove.Name = "bnRemove";
             this.bnRemove.Size = new System.Drawing.Size(155, 36);
@@ -94,7 +95,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbWorkTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel6.SetColumnSpan(this.tbWorkTree, 3);
-            this.tbWorkTree.Location = new System.Drawing.Point(3, 142);
+            this.tbWorkTree.Location = new System.Drawing.Point(3, 167);
             this.tbWorkTree.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbWorkTree.Name = "tbWorkTree";
             this.tbWorkTree.ReadOnly = true;
@@ -121,7 +122,7 @@
             // 
             // bnExplore
             // 
-            this.bnExplore.Location = new System.Drawing.Point(252, 221);
+            this.bnExplore.Location = new System.Drawing.Point(252, 246);
             this.bnExplore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnExplore.Name = "bnExplore";
             this.bnExplore.Size = new System.Drawing.Size(155, 36);
@@ -159,27 +160,30 @@
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tableLayoutPanel6.Controls.Add(this.bnExplore, 2, 5);
-            this.tableLayoutPanel6.Controls.Add(this.bnAdd, 0, 4);
+            this.tableLayoutPanel6.Controls.Add(this.bnExplore, 2, 6);
+            this.tableLayoutPanel6.Controls.Add(this.bnAdd, 0, 5);
             this.tableLayoutPanel6.Controls.Add(this.bnSelectBranch, 2, 2);
             this.tableLayoutPanel6.Controls.Add(this.bnExploreRepo, 2, 0);
-            this.tableLayoutPanel6.Controls.Add(this.tbWorkTree, 0, 3);
+            this.tableLayoutPanel6.Controls.Add(this.tbWorkTree, 0, 4);
             this.tableLayoutPanel6.Controls.Add(this.bnSelectWorkTree, 0, 2);
             this.tableLayoutPanel6.Controls.Add(this.label2, 1, 0);
             this.tableLayoutPanel6.Controls.Add(this.bnSelectRepo, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.tbRepo, 0, 1);
-            this.tableLayoutPanel6.Controls.Add(this.bnRemove, 2, 4);
+            this.tableLayoutPanel6.Controls.Add(this.bnRemove, 2, 5);
+            this.tableLayoutPanel6.Controls.Add(this.lbWorktree, 0, 3);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 6;
+            this.tableLayoutPanel6.RowCount = 7;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 62F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel6.Size = new System.Drawing.Size(455, 301);
             this.tableLayoutPanel6.TabIndex = 15;
             // 
@@ -192,6 +196,18 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "repo";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbWorktree
+            // 
+            this.lbWorktree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel6.SetColumnSpan(this.lbWorktree, 3);
+            this.lbWorktree.Location = new System.Drawing.Point(3, 138);
+            this.lbWorktree.Name = "lbWorktree";
+            this.lbWorktree.Size = new System.Drawing.Size(449, 25);
+            this.lbWorktree.TabIndex = 14;
+            this.lbWorktree.Text = "---";
+            this.lbWorktree.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // WorkTreeUC
             // 
@@ -220,5 +236,6 @@
         private System.Windows.Forms.Button bnSelectRepo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.Label label2;
+        private Label lbWorktree;
     }
 }

@@ -165,6 +165,9 @@ namespace RepoUtl
         internal string CanonicalName { get; private set; }
         internal string FriendlyName { get; private set; }
         internal bool IsRemote { get; private set; }
+
+        internal string CmpName => FriendlyName.StartsWith("origin/") ? FriendlyName.Substring(7) : FriendlyName;
+
         public override string ToString() => FriendlyName;
     }
 

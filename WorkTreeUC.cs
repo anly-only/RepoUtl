@@ -36,6 +36,7 @@ namespace RepoUtl
                 {
                     _worktree = value;
                     tbWorkTree.Text = value?.ToString();
+                    lbWorktree.Text = value?.Branch.CanonicalName;
                     OnWorktreePathChanged?.Invoke(WorktreePath);
                 }
             }
@@ -61,7 +62,7 @@ namespace RepoUtl
         {
             var repo = RepoBase.GetRepo(RepoWorkingCopyPath, Report) as IRepoGit;
             bool mainEN = repo != null && Worktree != null;
-            bnAdd.Enabled = mainEN && repo.GetWorkTrees().FindIndex(a => a.Name == Worktree.Name) == -1;
+            bnAdd.Enabled = mainEN && repo.GetWorkTrees().FindIndex(a => a.Branch.CmpName == Worktree.Branch.CmpName) == -1;
             bnRemove.Enabled = mainEN && !bnAdd.Enabled;
             tbWorkTree.ReadOnly = !mainEN || bnRemove.Enabled;
             bnExplore.Enabled = bnRemove.Enabled;
@@ -269,7 +270,7 @@ namespace RepoUtl
             try
             {
                 var repo = RepoBase.GetRepo(RepoWorkingCopyPath, Report) as IRepoGit;
-                var o = SelectItem(repo.GetBranches(), branch =>
+                var o = SelectItem(repo.GetBranches().DistinctBy(a => a.CmpName), branch =>
                 {
                     var s = branch.ToString();
                     if (s.StartsWith("refs/"))
@@ -283,7 +284,7 @@ namespace RepoUtl
                 if (o != null)
                 {
                     var wts = repo.GetWorkTrees();
-                    var w = wts.FirstOrDefault(a => a.Branch.FriendlyName == o.FriendlyName);
+                    var w = wts.FirstOrDefault(a => a.Branch.CmpName == o.CmpName);
                     if (w != null)
                         Worktree = w;
                     else

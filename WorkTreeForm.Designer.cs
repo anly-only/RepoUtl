@@ -36,17 +36,19 @@
             // 
             this.uc.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uc.Location = new System.Drawing.Point(0, 0);
+            this.uc.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.uc.Name = "uc";
-            this.uc.Size = new System.Drawing.Size(461, 221);
+            this.uc.Size = new System.Drawing.Size(461, 308);
             this.uc.TabIndex = 0;
             // 
             // WorkTreeForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(461, 221);
+            this.ClientSize = new System.Drawing.Size(461, 308);
             this.Controls.Add(this.uc);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WorkTreeForm";
