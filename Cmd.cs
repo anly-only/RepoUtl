@@ -185,6 +185,9 @@ namespace RepoUtl
             sec = ini.GetSection("Downloads");
             sec.Set(Key.File, $"<374DE290-123F-4565-9164-39C4925E467B>");
 
+            sec = ini.GetSection("Search *.sln");
+            sec.Set(Key.File, @"search-ms:query=*.sln&crumb=location:<root>\&");
+
             ini.GetSection("Empty section is separator");
 
             sec = ini.GetSection("Explore INI");
