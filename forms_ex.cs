@@ -12,6 +12,30 @@ namespace forms_ex
 {
     static class ControlEx
     {
+        private const int WM_SETREDRAW = 0x000B;
+
+        public static void SuspendUpdate(this Control control)
+        {
+            Message msgSuspendUpdate = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero,
+                IntPtr.Zero);
+
+            NativeWindow window = NativeWindow.FromHandle(control.Handle);
+            window.DefWndProc(ref msgSuspendUpdate);
+        }
+
+        public static void ResumeUpdate(this Control control)
+        {
+            // Create a C "true" boolean as an IntPtr
+            IntPtr wparam = new IntPtr(1);
+            Message msgResumeUpdate = Message.Create(control.Handle, WM_SETREDRAW, wparam,
+                IntPtr.Zero);
+
+            NativeWindow window = NativeWindow.FromHandle(control.Handle);
+            window.DefWndProc(ref msgResumeUpdate);
+
+            control.Invalidate();
+        }
+
         public static void SetFontSize(this Control c, double size)
         {
             if (size > 0)
@@ -163,6 +187,7 @@ namespace forms_ex
 
             FontSize,            // Control
             Form_Size,           // Form
+            Form_Location,      // Form
             ListView_Colums      // ListView
         }
 
@@ -189,8 +214,13 @@ namespace forms_ex
                 if (IsSave == null || IsSave(c, CP.FontSize))
                     Add(c, CP.FontSize.ToString(), c.Font.Size.ToString());
 
-                if (c is Form form && (IsSave == null || IsSave(form, CP.Form_Size)))
-                    Add(form, CP.Form_Size.ToString(), form.Size.ToString());
+                if (c is Form form)
+                {
+                    if ((IsSave == null || IsSave(form, CP.Form_Size)))
+                        Add(form, CP.Form_Size.ToString(), form.Size.ToString());
+                    if ((IsSave == null || IsSave(form, CP.Form_Location)))
+                        Add(form, CP.Form_Location.ToString(), form.Location.ToString());
+                }
 
                 if (c is ListView lv && (IsSave == null || IsSave(lv, CP.ListView_Colums)))
                     Add(lv, CP.ListView_Colums.ToString(), lv.SaveColumns());
@@ -200,6 +230,8 @@ namespace forms_ex
             return s;
         }
 
+        internal static void ReadUI(string UI, params Control[] controls) => ReadUI(controls, UI);
+
         internal static void ReadUI(IEnumerable<Control> controls, string UI)
         {
             try
@@ -208,32 +240,48 @@ namespace forms_ex
                 foreach (var line in lines)
                 {
                     var m = Regex.Match(line, @"(\w+)\.(\w+)=(.+)");
-                    var name = m.Groups[1].Value;
-                    var c = controls.First(a => a.Name == name);
-                    CP prop = (CP)Enum.Parse(typeof(CP), m.Groups[2].Value);
-                    var value = m.Groups[3].Value;
-                    switch (prop)
+                    if (m.Success)
                     {
-                        case CP.FontSize:
-                            var f = float.Parse(value);
-                            c.SetFontSize(f);
-                            break;
-                        case CP.Form_Size:
-                            var m2 = Regex.Match(value, @"Width=(\d+).+Height=(\d+)");
-                            var form = (Form)c;
-                            c.Width = int.Parse(m2.Groups[1].Value);
-                            c.Height = int.Parse(m2.Groups[2].Value);
-                            break;
-                        case CP.ListView_Colums:
-                            var lv = (ListView)c;
-                            lv.ReadColumns(value);
-                            break;
+                        var name = m.Groups[1].Value;
+                        var c = controls.First(a => a.Name == name);
+                        CP prop = (CP)Enum.Parse(typeof(CP), m.Groups[2].Value);
+                        var value = m.Groups[3].Value;
+                        switch (prop)
+                        {
+                            case CP.FontSize:
+                            {
+                                var f = float.Parse(value);
+                                c.SetFontSize(f);
+                                break;
+                            }
+                            case CP.Form_Size:
+                            {
+                                var m2 = Regex.Match(value, @"Width=(\d+).+Height=(\d+)");
+                                var form = (Form)c;
+                                c.Width = int.Parse(m2.Groups[1].Value);
+                                c.Height = int.Parse(m2.Groups[2].Value);
+                                break;
+                            }
+                            case CP.Form_Location:
+                            {
+                                var m2 = Regex.Match(value, @"X=(-?\d+).+Y=(-?\d+)");
+                                var form = (Form)c;
+                                form.Location = new Point(int.Parse(m2.Groups[1].Value), int.Parse(m2.Groups[2].Value));
+                                break;
+                            }
+                            case CP.ListView_Colums:
+                            {
+                                var lv = (ListView)c;
+                                lv.ReadColumns(value);
+                                break;
+                            }
+                        }
                     }
                 }
             }
-            catch
+            catch (Exception ee)
             {
-                Debug.Assert(false);
+                Debug.Fail(ee.Message);
             }
         }
 
