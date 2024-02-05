@@ -36,6 +36,17 @@ namespace forms_ex
             control.Invalidate();
         }
 
+        public static void EnsureVisible(this Form form)
+        {
+            Rectangle rc = Screen.FromControl(form).Bounds;
+            Point p = form.Location;
+            p.X = Math.Min(p.X, rc.Right - form.Width);
+            p.Y = Math.Min(p.Y, rc.Bottom - form.Height);
+            p.X = Math.Max(p.X, rc.Left);
+            p.Y = Math.Max(p.Y, rc.Top);
+            form.Location = p;
+        }
+
         public static void SetFontSize(this Control c, double size)
         {
             if (size > 0)
@@ -187,7 +198,7 @@ namespace forms_ex
 
             FontSize,            // Control
             Form_Size,           // Form
-            Form_Location,      // Form
+            Form_Location,       // Form
             ListView_Colums      // ListView
         }
 
@@ -267,6 +278,7 @@ namespace forms_ex
                                 var m2 = Regex.Match(value, @"X=(-?\d+).+Y=(-?\d+)");
                                 var form = (Form)c;
                                 form.Location = new Point(int.Parse(m2.Groups[1].Value), int.Parse(m2.Groups[2].Value));
+                                form.EnsureVisible();
                                 break;
                             }
                             case CP.ListView_Colums:

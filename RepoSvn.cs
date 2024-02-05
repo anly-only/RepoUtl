@@ -50,10 +50,13 @@ namespace RepoUtl
 
                 client.Status(WorkingCopy, arg, (s, e) =>
                 {
-                    var item = new RepoItemSvn(e);
-                    if (item.Status != ItemStatus.None)
+                    if (e.NodeKind == SvnNodeKind.File)
                     {
-                        back.Invoke(item);
+                        var item = new RepoItemSvn(e);
+                        if (item.Status != ItemStatus.None)
+                        {
+                            back.Invoke(item);
+                        } 
                     }
                 });
             }

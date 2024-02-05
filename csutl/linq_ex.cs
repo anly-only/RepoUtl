@@ -26,6 +26,29 @@ namespace System.Linq
             foreach (var a in ee)
                 action(a);
         }
+
+
+        /// <summary>
+        /// return default if items Count != 1
+        /// </summary>
+        public static T SingleOr<T>(this IEnumerable<T> ee, T or = default(T))
+        {
+            T ret = or;
+            int n = 0;
+            foreach (var item in ee)
+            {
+                if (++n == 1)
+                {
+                    ret = item;
+                }
+                else
+                {
+                    ret = or;
+                    break;
+                }
+            }
+            return ret;
+        }
     }
 }
 
