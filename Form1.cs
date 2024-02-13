@@ -1,14 +1,8 @@
 ﻿using csutl;
 using forms_ex;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace RepoUtl
 {
@@ -18,6 +12,7 @@ namespace RepoUtl
         ToolTip toolTip = new ToolTip();
         const string basePostfix = "-base";
         DocumentWatcher lastCopyWatcher = new DocumentWatcher();
+        TextBox tbBranch;
 
         string Root
         {
@@ -28,6 +23,18 @@ namespace RepoUtl
         public Form1()
         {
             InitializeComponent();
+
+            this.tbBranch = new TextBox();
+            this.tableLayoutPanel1.Controls.Add(this.tbBranch, 0, 1);
+            this.tableLayoutPanel1.SetColumnSpan(this.tbBranch, 2);
+            this.tbBranch.Location = new Point(3, 33);
+            this.tbBranch.Name = "lbBranch";
+            this.tbBranch.Size = new Size(290, 29);
+            this.tbBranch.TabIndex = 1;
+            this.tbBranch.Text = "Svn: ignore unversioned folders";
+            this.tbBranch.ReadOnly = true;
+            this.tbBranch.BorderStyle = BorderStyle.None;
+
             lastCopyWatcher.OnFileChanged += this.LastCopyWatcher_OnFileChanged;
         }
 
@@ -60,7 +67,15 @@ namespace RepoUtl
             {
                 var kind = RepoBase.GetRepoKind(Root, out string wc);
 
-                bnIgnoreUnversioned.Enabled = kind == RepoKind.Svn;
+                bnIgnoreUnversioned.Visible = kind == RepoKind.Svn;
+                tbBranch.Visible = kind == RepoKind.Git;
+
+                if (kind == RepoKind.Git && string.IsNullOrEmpty(tbBranch.Text))
+                {
+                    RepoGit repo = RepoBase.GetRepo(Root, Report) as RepoGit;
+                    tbBranch.Text = repo.CurrentBranch;
+                }    
+
                 //bnCorrectMergeInfo.Enabled = kind == RepoKind.Svn;
                 //bnCorrectRevisions.Enabled = kind == RepoKind.Svn;
 
@@ -511,6 +526,7 @@ namespace RepoUtl
         {
             try
             {
+                tbBranch.Text = string.Empty;
                 if (cbRepo.SelectedIndex > 0)
                 {
                     cbRepo.SelectItem(cbRepo.SelectedItem); // move item to begin of list

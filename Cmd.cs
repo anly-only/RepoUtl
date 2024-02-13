@@ -1,8 +1,10 @@
 ﻿using csutl;
+using csutl.ini;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,6 +32,9 @@ namespace RepoUtl
             internal const string Visible = "Visible";
             internal const string Enabled = "Enabled";
             internal const string WaitForExit = "WaitForExit";
+            internal const string OR = "OR";
+            internal const string AND = "AND";
+            internal const string NOT = "NOT";
         }
 
         class Condition
@@ -86,7 +91,7 @@ namespace RepoUtl
             foreach (var section in ini.Sections.Where(a => !a.Name.IsEmpty()))
             {
                 var c = new Cmd();
-                if (GetBool(section.Value(Key.Visible), true))
+                if (GetBoolExpr(section, Key.Visible, true))
                 {
                     if (!section.Items.Any())
                     {
@@ -97,8 +102,8 @@ namespace RepoUtl
                         c.Name = section.Name;
                         c.File = section.Value(Key.File);
                         c.Args = section.Value(Key.Args);
-                        c.Enabled = GetBool(section.Value(Key.Enabled), true);
-                        c.WaitForExit = GetBool(section.Value(Key.WaitForExit), false);
+                        c.Enabled = GetBoolExpr(section, Key.Enabled, true);
+                        c.WaitForExit = GetBoolExpr(section, Key.WaitForExit, false);
                     }
                     yield return c;
                 }
@@ -145,6 +150,51 @@ namespace RepoUtl
                 ret = GetGuidPath(guid);
             }
             return ret;
+        }
+
+        class OP
+        {
+            internal string Op;
+            internal bool Not;
+
+            OP(string key)
+            {
+                var x = key.Split(" ");
+                this.Op = x[0];
+                if (x.Length > 1)
+                {
+                    this.Not = x.Length > 1 && x[1] == Key.NOT;
+                }
+            }
+
+            internal static OP Parse(string keys) => new OP(keys);
+        }
+
+        bool GetBoolExpr(Section sec, string key, bool defaultValue)
+        {
+            bool? ret = null;
+            var items = sec.KeyValues.ToList();
+            Item itm = items.FirstOrDefault(a => a.Key == key);
+            if (itm != null)
+            {
+                ret = GetBool(itm.Value, false);
+                for (int i = items.IndexOf(itm) + 1; i < items.Count; i++)
+                {
+                    Item itm2 = items[i];
+                    var op = OP.Parse(itm2.Key);
+
+                    if (!ret.Value && op.Op == Key.OR)
+                        ret = GetBool(itm2.Value, false);
+                    else if (ret.Value && op.Op == Key.AND)
+                        ret = GetBool(itm2.Value, false);
+                    else
+                        break;
+
+                    if (op.Not)
+                        ret = !ret;
+                }
+            }
+            return ret.HasValue ? ret.Value : defaultValue;
         }
 
         bool GetBool(string expression, bool defaultValue)

@@ -1,9 +1,5 @@
 ﻿using LibGit2Sharp;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
 namespace RepoUtl
 {
@@ -17,6 +13,28 @@ namespace RepoUtl
     {
         public Action<string> Report { get; }
         public string WorkingCopy { get; }
+
+        public string CurrentBranch
+        {
+            get 
+            {
+                string ret = string.Empty;
+                try
+                {
+                    using (var repo = new Repository(WorkingCopy))
+                    {
+                        ret = repo.Head.TrackedBranch.FriendlyName;
+                        if (ret.StartsWith("origin/"))
+                            ret = ret.Substring(7);
+                    }
+                }
+                catch (Exception ee)
+                {
+                    Report(ee.Message);
+                }
+                return ret;
+            }
+        }
 
         internal RepoGit(string workingCopy, Action<string> Report)
         {
