@@ -52,25 +52,25 @@ class FormatImpl : Format
 
         int start = sb.Length;
 
-        if (item.IsKey)
+        if (item.HasKey)
         {
             bool x = item.Key.FirstOrDefault() == '[';
             InQuotes(sb, item.Key, f.Quote, x, "=", "//"); // [ as first !!!
             sb.Append(" = ");
         }
 
-        if (item.IsValue)
+        if (item.HasValue)
         {
             bool x = start == sb.Length && item.Value.FirstOrDefault() == '[';
             InQuotes(sb, item.Value, f.Quote, x, "//"); // [ as first !!! 
         }
 
-        if (item.IsComment && commentAlign >= 0)
+        if (item.HasComment && commentAlign >= 0)
         {
             if (sb.Length != start)
                 sb.Append(' ');
 
-            if (item.IsKey || item.IsValue) // item without key and value allign as item, not as comment
+            if (item.HasKey || item.HasValue) // item without key and value allign as item, not as comment
             {
                 if (commentAlign > 0)
                 {

@@ -4,9 +4,9 @@ namespace csutl.ini;
 
 public interface Item
 {
-    bool IsKey { get; }
-    bool IsValue { get; }
-    bool IsComment { get; }
+    bool HasKey { get; }
+    bool HasValue { get; }
+    bool HasComment { get; }
 
     string Key { get; }
     string Comment { get; set; }

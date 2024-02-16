@@ -164,9 +164,9 @@ namespace RepoUtl
                 {
                     Item itm2 = items[i];
 
-                    if (itm2.IsKey)
+                    if (itm2.HasKey)
                         break; // next key
-                    else if (!itm2.IsValue)
+                    else if (!itm2.HasValue)
                         continue; // only comment
 
                     if (!ret && itm2.Value.StartsWith("OR "))

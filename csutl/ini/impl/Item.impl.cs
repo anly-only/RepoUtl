@@ -16,10 +16,10 @@ class ItemImpl : LinkedListNode<ItemImpl>, Item
     internal Section Section { get; private set; }
     private IModifiable Modifiable => this.Section.ini as FileImpl;
 
-    public bool IsKey => !string.IsNullOrEmpty(this._key);
-    public bool IsValue => !string.IsNullOrEmpty(this._value);
-    public bool IsComment => !string.IsNullOrEmpty(this._comment);
-    public bool IsEmpty => !this.IsKey && !this.IsValue && !this.IsComment;
+    public bool HasKey => !string.IsNullOrEmpty(this._key);
+    public bool HasValue => !string.IsNullOrEmpty(this._value);
+    public bool HasComment => !string.IsNullOrEmpty(this._comment);
+    public bool IsEmpty => !this.HasKey && !this.HasValue && !this.HasComment;
 
     public string Key { get => this._key; set => this.Modifiable.Modify(ref this._key, value); }
     public string Value { get => this._value; set => this.Modifiable.Modify(ref this._value, value); }
@@ -88,13 +88,13 @@ class ItemImpl : LinkedListNode<ItemImpl>, Item
         if (!e.Any())
             throw new Exception();
         e = e.Skip(1);
-        return e.TakeWhile(a => !a.IsKey);
+        return e.TakeWhile(a => !a.HasKey);
     }
 
     public IEnumerable<string> GroupValues()
     {
         var e = this.Group();
-        if (e.Any() && e.First().IsKey && !e.First().IsValue)  // first can be empty. Like: key = // comment
+        if (e.Any() && e.First().HasKey && !e.First().HasValue)  // first can be empty. Like: key = // comment
             e = e.Skip(1);
         return e.Select(a => a.Value);
     }

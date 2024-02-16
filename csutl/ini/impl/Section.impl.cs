@@ -37,7 +37,7 @@ class Section : ini.Section
 
     public IEnumerable<Item> Items => this.items;
 
-    public IEnumerable<Item> KeyValues => this.Items.Where(a => a.IsKey);
+    public IEnumerable<Item> KeyValues => this.Items.Where(a => a.HasKey);
 
     public Item FindItem(string key)
     {
@@ -134,7 +134,7 @@ class Section : ini.Section
     {
         var item = new ItemImpl(this, key, _defaultValue, _defaultComment);
         this.items.AddLast(item);
-        if (item.IsKey)
+        if (item.HasKey)
             this.map[key] = item;
         if (!this.Modifiable.Initializing)
             this.Modifiable.Modified = true;
@@ -164,7 +164,7 @@ class Section : ini.Section
         bool sub = false;
         foreach (var item in this.items)
         {
-            if (item.IsKey)
+            if (item.HasKey)
             {
                 keyFound = true;
                 sub = false;
@@ -180,7 +180,7 @@ class Section : ini.Section
 
     internal void SetSubItemsCount(ItemImpl item, int count)
     {
-        bool xx = item.Next != null && !item.Next.IsKey && count > 0;
+        bool xx = item.Next != null && !item.Next.HasKey && count > 0;
         if (xx)
             this.Modifiable.Modified = true;
 
@@ -188,7 +188,7 @@ class Section : ini.Section
         {
             count--;
             item = item.Next;
-            xx = item.Next != null && !item.Next.IsKey && count > 0;
+            xx = item.Next != null && !item.Next.HasKey && count > 0;
         }
 
         if (count > 0)
@@ -203,14 +203,14 @@ class Section : ini.Section
         }
         else
         {
-            bool x = item.Next != null && !item.Next.IsKey;
+            bool x = item.Next != null && !item.Next.HasKey;
             if (x)
                 this.Modifiable.Modified = true;
 
             while (x)
             {
                 this.items.Remove(item.Next);
-                x = item.Next != null && !item.Next.IsKey;
+                x = item.Next != null && !item.Next.HasKey;
             }
         }
     }
