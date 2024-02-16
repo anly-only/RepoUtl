@@ -39,8 +39,8 @@ namespace RepoUtl
 
         class Condition
         {
-            internal const string FolderExists = "folder_exists:";
-            internal const string FileExists = "file_exists:";
+            internal const string FolderExists = "folder_exists";
+            internal const string FileExists = "file_exists";
         }
 
         class Macro  // used in <> scope, like: <macro>
@@ -152,65 +152,62 @@ namespace RepoUtl
             return ret;
         }
 
-        class OP
-        {
-            internal string Op;
-            internal bool Not;
-
-            OP(string key)
-            {
-                var x = key.Split(" ");
-                this.Op = x[0];
-                if (x.Length > 1)
-                {
-                    this.Not = x.Length > 1 && x[1] == Key.NOT;
-                }
-            }
-
-            internal static OP Parse(string keys) => new OP(keys);
-        }
-
         bool GetBoolExpr(Section sec, string key, bool defaultValue)
         {
-            bool? ret = null;
-            var items = sec.KeyValues.ToList();
-            Item itm = items.FirstOrDefault(a => a.Key == key);
+            bool ret = defaultValue;
+            Item itm = sec.Items.FirstOrDefault(a => a.Key == key);
             if (itm != null)
             {
                 ret = GetBool(itm.Value, false);
+                var items = sec.Items.ToList();
                 for (int i = items.IndexOf(itm) + 1; i < items.Count; i++)
                 {
                     Item itm2 = items[i];
-                    var op = OP.Parse(itm2.Key);
 
-                    if (!ret.Value && op.Op == Key.OR)
-                        ret = GetBool(itm2.Value, false);
-                    else if (ret.Value && op.Op == Key.AND)
-                        ret = GetBool(itm2.Value, false);
+                    if (itm2.IsKey)
+                        break; // next key
+                    else if (!itm2.IsValue)
+                        continue; // only comment
+
+                    if (!ret && itm2.Value.StartsWith("OR "))
+                        ret = GetBool(itm2.Value.Substring(3), false);
+                    else if (ret && itm2.Value.StartsWith("AND "))
+                        ret = GetBool(itm2.Value.Substring(4), false);
                     else
                         break;
-
-                    if (op.Not)
-                        ret = !ret;
                 }
             }
-            return ret.HasValue ? ret.Value : defaultValue;
+            return ret;
         }
 
         bool GetBool(string expression, bool defaultValue)
         {
+            bool ok = true;
             bool ret = defaultValue;
             if (!expression.IsEmpty())
             {
-                if (string.Compare(expression, "true", true) == 0)
-                    ret = true;
-                else if (string.Compare(expression, "false", true) == 0)
-                    ret = false;
-                else if (expression.StartsWith(Condition.FolderExists, StringComparison.InvariantCultureIgnoreCase))
-                    ret = Directory.Exists(expression.Substring(Condition.FolderExists.Length).Trim());
-                else if (expression.StartsWith(Condition.FileExists, StringComparison.InvariantCultureIgnoreCase))
-                    ret = File.Exists(expression.Substring(Condition.FileExists.Length).Trim());
+                var m = Regex.Match(expression, @$"(\bNOT\b)?\s*(\w+)(\s.*)?");
+                if (m.Success)
+                {
+                    string value = m.Groups[2].Value;
+                    if (value.ToUpper() == "TRUE")
+                        ret = true;
+                    else if (value.ToUpper() == "FALSE")
+                        ret = false;
+                    else if (value == Condition.FolderExists)
+                        ret = Directory.Exists(m.Groups[3].Value.Trim());
+                    else if (value == Condition.FileExists)
+                        ret = File.Exists(m.Groups[3].Value.Trim());
+                    else
+                        ok = false;
+                }
                 else
+                    ok = false;
+
+                if (ok && m.Groups[1].Length != 0)
+                    ret = !ret;
+
+                if (!ok)
                     Report?.Invoke($"Invalid condition: {expression}");
             }
             return ret;
@@ -221,7 +218,6 @@ namespace RepoUtl
             var ini = csutl.ini.IniFactory.Get();
 
             var sec = ini.GetSection("");
-            sec.Set("", "", "See example commands below");
 
             sec = ini.GetSection("Explore root");
             sec.Set(Key.File, $"<{Macro.Root}>");
@@ -252,6 +248,76 @@ namespace RepoUtl
             sec.Set(Key.WaitForExit, "true");
 
             ini.Save(path);
+
+            string text = File.ReadAllText(path);
+            text = GitCommands() + text;
+            File.WriteAllText(path, text);
+        }
+
+        static string GitCommands()
+        {
+            return
+                @"
+[Example Menu] // this is only example
+   File = C:\Windows  // the command to execute
+
+   Visible = NOT TRUE      // first operand. every operand must be on separate line
+             OR NOT FALSE  // second operand
+
+   Enabled =    folder_exists C:\Windows  // if folder exists
+        AND NOT file_exists X:\Abc.txt    // and file not exists
+        AND TRUE                          // and true (really no sense write this, but for examle only)
+        OR FALSE                          // or false (no sense too)
+   
+   // The priority of AND/OR is ignored: 
+   //   result of every line is simply combined with the result of the next line,
+   //   if the next line exists and the result still not clear). 
+
+
+[separator]
+
+[Log]
+   File = TortoiseGitProc.exe
+   Args = /command:log /path:""<root>""
+   Visible = file_exists <root>\.git    // file exists in worktree
+          OR folder_exists <root>\.git  // folder exists in non-bare repo
+[Diff]
+   File = TortoiseGitProc.exe
+   Args = /command:repostatus /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+[Commit]
+   File = TortoiseGitProc.exe
+   Args = /command:commit /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+[Revert]
+   File = TortoiseGitProc.exe
+   Args = /command:revert /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+
+[separator]
+
+[Pull]
+   File = TortoiseGitProc.exe
+   Args = /command:pull /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+[Push]
+   File = TortoiseGitProc.exe
+   Args = /command:push /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+[Merge]
+   File = TortoiseGitProc.exe
+   Args = /command:merge /path:""<root>""
+   Visible = file_exists <root>\.git
+          OR folder_exists <root>\.git
+
+[separator]
+
+";
         }
 
         static string GetGuidPath(Guid guid)
