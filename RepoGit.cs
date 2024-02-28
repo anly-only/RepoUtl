@@ -16,14 +16,18 @@ namespace RepoUtl
 
         public string CurrentBranch
         {
-            get 
+            get
             {
                 string ret = string.Empty;
                 try
                 {
                     using (var repo = new Repository(WorkingCopy))
                     {
-                        ret = repo.Head.TrackedBranch.FriendlyName;
+                        if (repo.Head.TrackedBranch != null)
+                            ret = repo.Head.TrackedBranch.FriendlyName;
+                        else
+                            ret = repo.Head.FriendlyName;
+
                         if (ret.StartsWith("origin/"))
                             ret = ret.Substring(7);
                     }
