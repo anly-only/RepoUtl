@@ -36,6 +36,7 @@ namespace RepoUtl
             this.tbBranch.BorderStyle = BorderStyle.None;
 
             lastCopyWatcher.OnFileChanged += this.LastCopyWatcher_OnFileChanged;
+            this.Activated += this.Form1_Activated;
         }
 
         void Form1_Load(object sender, EventArgs e)
@@ -61,6 +62,12 @@ namespace RepoUtl
             SaveProperties();
         }
 
+        void Form1_Activated(object sender, EventArgs e)
+        {
+            tbBranch.Text = string.Empty;
+            ui_update();
+        }
+
         void ui_update()
         {
             try
@@ -74,7 +81,7 @@ namespace RepoUtl
                 {
                     RepoGit repo = RepoBase.GetRepo(Root, Report) as RepoGit;
                     tbBranch.Text = repo.CurrentBranch;
-                }    
+                }
 
                 //bnCorrectMergeInfo.Enabled = kind == RepoKind.Svn;
                 //bnCorrectRevisions.Enabled = kind == RepoKind.Svn;
