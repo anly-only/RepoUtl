@@ -64,8 +64,12 @@ namespace RepoUtl
 
         void updateView()
         {
-            var s = tbFilter.Text;
-            view = items.Where(a => DisplayText(a).Contains(s) || s.IsEmpty()).ToList();
+            string s = tbFilter.Text;
+
+            view = s.IsEmpty()
+                ? items.ToList()
+                : items.Where(a => DisplayText(a).Contains(s, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
             list.VirtualListSize = view.Count;
             list.Invalidate();
         }
