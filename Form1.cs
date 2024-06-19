@@ -51,6 +51,7 @@ namespace RepoUtl
             cbRepo.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
             cbPostfix.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
             tbReport.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
+            tbBranch.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
             LoadProperties();
             ui_update();
             ScanGitWorktrees();
@@ -157,7 +158,7 @@ namespace RepoUtl
             foreach (var item in cbPostfix.Items)
                 Properties.Settings.Default.Postfix.Add(item as string);
 
-            Properties.Settings.Default.FormUI = ControlEx.SaveUI(this, cbPostfix, cbRepo, tbReport);
+            Properties.Settings.Default.FormUI = ControlEx.SaveUI(this, cbPostfix, cbRepo, tbReport, tbBranch);
 
             Properties.Settings.Default.Save();
         }
@@ -287,7 +288,7 @@ namespace RepoUtl
             if (string.IsNullOrEmpty(root))
                 return string.Empty;
 
-            var postfix = cbPostfix.Text;
+            var postfix = cbPostfix.Text.Trim();
             if (string.IsNullOrWhiteSpace(postfix))
                 postfix = "modified";
 
