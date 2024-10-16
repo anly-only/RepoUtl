@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace RepoUtl
 {
@@ -14,14 +10,14 @@ namespace RepoUtl
         internal RepoComboItem(string s)
         {
             var ar = s.Split('|');
-            RepoPath = ar[0];
-            Postfix = string.Join("|", ar.Skip(1));
-            if (Postfix.IsEmpty())
-                Postfix = "modified";
+            this.RepoPath = ar[0];
+            this.Postfix = string.Join("|", ar.Skip(1));
+            if (this.Postfix.IsEmpty())
+                this.Postfix = "modified";
         }
 
         internal string SaveToString() => $"{this.RepoPath}|{this.Postfix}";
 
-        public override string ToString() => RepoPath;
+        public override string ToString() => this.RepoPath;
     }
 }

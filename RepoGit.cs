@@ -1,5 +1,8 @@
 ﻿using LibGit2Sharp;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace RepoUtl
 {
@@ -21,7 +24,7 @@ namespace RepoUtl
                 string ret = string.Empty;
                 try
                 {
-                    using (var repo = new Repository(WorkingCopy))
+                    using (var repo = new Repository(this.WorkingCopy))
                     {
                         if (repo.Head.TrackedBranch != null)
                             ret = repo.Head.TrackedBranch.FriendlyName;
@@ -34,7 +37,7 @@ namespace RepoUtl
                 }
                 catch (Exception ee)
                 {
-                    Report(ee.Message);
+                    this.Report(ee.Message);
                 }
                 return ret;
             }
@@ -42,7 +45,7 @@ namespace RepoUtl
 
         internal RepoGit(string workingCopy, Action<string> Report)
         {
-            WorkingCopy = workingCopy;
+            this.WorkingCopy = workingCopy;
             this.Report = Report;
         }
 
@@ -50,9 +53,9 @@ namespace RepoUtl
         {
             try
             {
-                using (var repo = new Repository(WorkingCopy))
+                using (var repo = new Repository(this.WorkingCopy))
                 {
-                    var relative = item.Path.Substring(WorkingCopy.Length + 1);
+                    var relative = item.Path.Substring(this.WorkingCopy.Length + 1);
                     var treeEntry = repo.Head.Tip[relative];
 
                     if (treeEntry != null)
@@ -75,13 +78,13 @@ namespace RepoUtl
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
         public void EnumChanges(Action<RepoItem> back)
         {
-            using (var repo = new Repository(WorkingCopy))
+            using (var repo = new Repository(this.WorkingCopy))
             {
                 StatusOptions arg = new StatusOptions()
                 {
@@ -100,7 +103,7 @@ namespace RepoUtl
 
         public void IgnoreUnversioned()
         {
-            Report.Invoke("Not implemented.");
+            this.Report.Invoke("Not implemented.");
         }
 
         internal static bool IsWorkingCopyFolder(string folder)
@@ -115,7 +118,7 @@ namespace RepoUtl
         public List<BranchInfo> GetBranches()
         {
             var ret = new List<BranchInfo>();
-            using (var repo = new Repository(WorkingCopy))
+            using (var repo = new Repository(this.WorkingCopy))
             {
                 foreach (var a in repo.Branches)
                 {
@@ -129,7 +132,7 @@ namespace RepoUtl
         public List<WorktreeInfo> GetWorkTrees()
         {
             var ret = new List<WorktreeInfo>();
-            using (var repo = new Repository(WorkingCopy))
+            using (var repo = new Repository(this.WorkingCopy))
             {
                 foreach (var w in repo.Worktrees)
                 {
@@ -141,7 +144,7 @@ namespace RepoUtl
                     }
                     catch (Exception ee)
                     {
-                        Report?.Invoke($"{w.Name}: {ee.Message}");
+                        this.Report?.Invoke($"{w.Name}: {ee.Message}");
                     }
                 }
             }
@@ -161,15 +164,15 @@ namespace RepoUtl
             public RepoItemGit(RepoGit repo, StatusEntry e)
             {
                 this.repo = repo;
-                status = e;
+                this.status = e;
             }
 
-            public string Path => System.IO.Path.Combine(repo.WorkingCopy, status.FilePath);
+            public string Path => System.IO.Path.Combine(this.repo.WorkingCopy, this.status.FilePath);
 
             public ItemStatus Status =>
-                status.State.HasFlag(FileStatus.ModifiedInWorkdir) || status.State.HasFlag(FileStatus.ModifiedInIndex)
+                this.status.State.HasFlag(FileStatus.ModifiedInWorkdir) || this.status.State.HasFlag(FileStatus.ModifiedInIndex)
                     ? ItemStatus.Modified
-                    : status.State.HasFlag(FileStatus.NewInWorkdir)
+                    : this.status.State.HasFlag(FileStatus.NewInWorkdir)
                         ? ItemStatus.Unversioned
                         : ItemStatus.None;
         }
@@ -180,36 +183,36 @@ namespace RepoUtl
     {
         internal BranchInfo(Branch b)
         {
-            CanonicalName = b.CanonicalName;
-            FriendlyName = b.FriendlyName;
-            IsRemote = b.IsRemote;
+            this.CanonicalName = b.CanonicalName;
+            this.FriendlyName = b.FriendlyName;
+            this.IsRemote = b.IsRemote;
         }
         internal string CanonicalName { get; private set; }
         internal string FriendlyName { get; private set; }
         internal bool IsRemote { get; private set; }
 
-        internal string CmpName => FriendlyName.StartsWith("origin/") ? FriendlyName.Substring(7) : FriendlyName;
+        internal string CmpName => this.FriendlyName.StartsWith("origin/") ? this.FriendlyName.Substring(7) : this.FriendlyName;
 
-        public override string ToString() => FriendlyName;
+        public override string ToString() => this.FriendlyName;
     }
 
     class WorktreeInfo
     {
         internal WorktreeInfo(BranchInfo b)
         {
-            Branch = b;
-            Name = Path.GetFileName(b.FriendlyName);
+            this.Branch = b;
+            this.Name = Path.GetFileName(b.FriendlyName);
         }
         internal WorktreeInfo(Worktree w)
         {
-            Name = w.Name;
+            this.Name = w.Name;
             var h = w.WorktreeRepository.Head;
             if (h is Branch b)
-                Branch = new BranchInfo(b);
+                this.Branch = new BranchInfo(b);
         }
         internal string Name { get; set; }
         internal BranchInfo Branch { get; private set; }
 
-        public override string ToString() => Name;
+        public override string ToString() => this.Name;
     }
 }

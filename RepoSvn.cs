@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace RepoUtl
 {
@@ -17,7 +16,7 @@ namespace RepoUtl
 
         internal RepoSvn(string workingCopy, Action<string> Report)
         {
-            WorkingCopy = workingCopy;
+            this.WorkingCopy = workingCopy;
             this.Report = Report;
         }
 
@@ -33,7 +32,7 @@ namespace RepoUtl
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -48,7 +47,7 @@ namespace RepoUtl
                     RetrieveAllEntries = true
                 };
 
-                client.Status(WorkingCopy, arg, (s, e) =>
+                client.Status(this.WorkingCopy, arg, (s, e) =>
                 {
                     if (e.NodeKind == SvnNodeKind.File)
                     {
@@ -56,7 +55,7 @@ namespace RepoUtl
                         if (item.Status != ItemStatus.None)
                         {
                             back.Invoke(item);
-                        } 
+                        }
                     }
                 });
             }
@@ -68,14 +67,14 @@ namespace RepoUtl
             {
                 using (SvnClient svn = new SvnClient())
                 {
-                    Report("ignore in " + WorkingCopy + " ...");
-                    ignoreFiles(svn, WorkingCopy);
-                    Report("OK");
+                    this.Report("ignore in " + this.WorkingCopy + " ...");
+                    this.ignoreFiles(svn, this.WorkingCopy);
+                    this.Report("OK");
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -115,7 +114,7 @@ namespace RepoUtl
                                         val = string.Empty;
                                     val += name + "\r\n";
                                     svn.SetProperty(parent_folder, SvnPropertyNames.SvnIgnore, val);
-                                    Report?.Invoke(folder);
+                                    this.Report?.Invoke(folder);
                                 }
                                 else
                                 {
@@ -125,7 +124,7 @@ namespace RepoUtl
                         }
                         catch (Exception ee)
                         {
-                            Report?.Invoke("set ignore fails: " + ee.Message);
+                            this.Report?.Invoke("set ignore fails: " + ee.Message);
                         }
                     }
                 }
@@ -133,7 +132,7 @@ namespace RepoUtl
 
             foreach (string folder in check)
             {
-                ignoreFiles(svn, folder);
+                this.ignoreFiles(svn, folder);
             }
         }
 
@@ -151,12 +150,12 @@ namespace RepoUtl
 
             public RepoItemSvn(SvnStatusEventArgs e)
             {
-                status = e;
+                this.status = e;
             }
 
-            public string Path => status.FullPath;
+            public string Path => this.status.FullPath;
 
-            public ItemStatus Status => status.Modified ? ItemStatus.Modified : !status.Versioned ? ItemStatus.Unversioned : ItemStatus.None;
+            public ItemStatus Status => this.status.Modified ? ItemStatus.Modified : !this.status.Versioned ? ItemStatus.Unversioned : ItemStatus.None;
         }
     }
 }

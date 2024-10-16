@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -16,19 +15,19 @@ namespace RepoUtl
 
             internal Range(int begin)
             {
-                Begin = begin;
-                End = begin;
+                this.Begin = begin;
+                this.End = begin;
             }
 
             internal Range(int begin, int end)
             {
-                Begin = begin;
-                End = end;
+                this.Begin = begin;
+                this.End = end;
             }
 
             public override string ToString()
             {
-                return Begin == End ? Begin.ToString() : $"{Begin}-{End}";
+                return this.Begin == this.End ? this.Begin.ToString() : $"{this.Begin}-{this.End}";
             }
         }
 

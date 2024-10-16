@@ -21,9 +21,9 @@ namespace csutl
         void ILinkedListNode<T>.LinkedList_SetNode(bool next, T node)
         {
             if (next)
-                Next = node;
+                this.Next = node;
             else
-                Prev = node;
+                this.Prev = node;
         }
     }
 
@@ -61,13 +61,13 @@ namespace csutl
 
         public void Clear()
         {
-            First = default;
-            Last = default;
-            Count = 0;
+            this.First = default;
+            this.Last = default;
+            this.Count = 0;
         }
 
-        public void AddFirst(T node) => AddBefore(First, node);
-        public void AddLast(T node) => AddAfter(Last, node);
+        public void AddFirst(T node) => this.AddBefore(this.First, node);
+        public void AddLast(T node) => this.AddAfter(this.Last, node);
 
         public void AddBefore(T node, T add)
         {
@@ -76,7 +76,7 @@ namespace csutl
             Debug.Assert(!this.Contains(add));
 
             if (node == null)
-                node = First;
+                node = this.First;
 
             T oldPrev = default;
 
@@ -90,12 +90,12 @@ namespace csutl
             connect(add, node);
 
             if (add.Prev == null)
-                First = add;
+                this.First = add;
 
             if (add.Next == null)
-                Last = add;
+                this.Last = add;
 
-            Count++;
+            this.Count++;
         }
 
         public void AddAfter(T node, T add)
@@ -105,7 +105,7 @@ namespace csutl
             Debug.Assert(!this.Contains(add));
 
             if (node == null)
-                node = Last;
+                node = this.Last;
 
             T oldNext = default;
 
@@ -119,22 +119,22 @@ namespace csutl
             connect(add, oldNext);
 
             if (add.Prev == null)
-                First = add;
+                this.First = add;
 
             if (add.Next == null)
-                Last = add;
+                this.Last = add;
 
-            Count++;
+            this.Count++;
         }
 
         public T AddAfter(T node, IEnumerable<T> add) // return last
         {
             if (node == null)
-                node = Last;
+                node = this.Last;
 
             foreach (var item in add)
             {
-                AddAfter(node, item);
+                this.AddAfter(node, item);
                 node = item;
             }
 
@@ -153,13 +153,13 @@ namespace csutl
             disconnect(node, n);
             connect(p, n);
 
-            if (object.ReferenceEquals(node, First))
-                First = n;
+            if (object.ReferenceEquals(node, this.First))
+                this.First = n;
 
-            if (object.ReferenceEquals(node, Last))
-                Last = p;
+            if (object.ReferenceEquals(node, this.Last))
+                this.Last = p;
 
-            Count--;
+            this.Count--;
         }
 
         static void disconnect(T prev, T next)
@@ -186,8 +186,8 @@ namespace csutl
                 next.LinkedList_SetNode(false, prev);
         }
 
-        public IEnumerator<T> GetEnumerator() => _items.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
-        IEnumerable<T> _items => First == null ? Enumerable.Empty<T>() : First.GetNexts(true);
+        public IEnumerator<T> GetEnumerator() => this._items.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this._items.GetEnumerator();
+        IEnumerable<T> _items => this.First == null ? Enumerable.Empty<T>() : this.First.GetNexts(true);
     }
 }

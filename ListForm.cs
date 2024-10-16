@@ -1,12 +1,8 @@
 using forms_ex;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RepoUtl
@@ -19,9 +15,9 @@ namespace RepoUtl
 
         public ListForm()
         {
-            InitializeComponent();
-            list.MouseWheel += (c, e) => (c as Control).Zoom_MouseWheel(e);
-            tbFilter.MouseWheel += (c, e) => (c as Control).Zoom_MouseWheel(e);
+            this.InitializeComponent();
+            this.list.MouseWheel += (c, e) => (c as Control).Zoom_MouseWheel(e);
+            this.tbFilter.MouseWheel += (c, e) => (c as Control).Zoom_MouseWheel(e);
         }
 
         void ListForm_Load(object sender, EventArgs e)
@@ -33,7 +29,7 @@ namespace RepoUtl
 
         void ListForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Properties.Settings.Default.ListFormUI = ControlEx.SaveUI(this, tbFilter, list);
+            Properties.Settings.Default.ListFormUI = ControlEx.SaveUI(this, this.tbFilter, this.list);
         }
 
 
@@ -42,8 +38,8 @@ namespace RepoUtl
         /// </summary>
         public Func<object, string> DisplayText
         {
-            get => displayTextImpl;
-            set => displayTextImpl = value ?? DisplayTextDefaultImpl;
+            get => this.displayTextImpl;
+            set => this.displayTextImpl = value ?? DisplayTextDefaultImpl;
         }
 
         /// <summary>
@@ -57,45 +53,45 @@ namespace RepoUtl
         public void SetItems(IEnumerable<object> items)
         {
             this.items = items.ToList();
-            updateView();
+            this.updateView();
         }
 
         static string DisplayTextDefaultImpl(object a) => a.ToString();
 
         void updateView()
         {
-            string s = tbFilter.Text;
+            string s = this.tbFilter.Text;
 
-            view = s.IsEmpty()
-                ? items.ToList()
-                : items.Where(a => DisplayText(a).Contains(s, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            this.view = s.IsEmpty()
+                ? this.items.ToList()
+                : this.items.Where(a => this.DisplayText(a).Contains(s, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            list.VirtualListSize = view.Count;
-            list.Invalidate();
+            this.list.VirtualListSize = this.view.Count;
+            this.list.Invalidate();
         }
 
         void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            updateView();
+            this.updateView();
         }
 
         void list_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            var s = DisplayText(view[e.ItemIndex]);
+            var s = this.DisplayText(this.view[e.ItemIndex]);
             e.Item = new ListViewItem(s);
         }
 
         void list_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            DialogResult = DialogResult.OK;
-            Close();
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         void list_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var x = list.SelectedIndices;
+            var x = this.list.SelectedIndices;
             if (x.Count != 0)
-                SelectedItem = view[x[0]];
+                this.SelectedItem = this.view[x[0]];
         }
 
         protected override bool ProcessKeyPreview(ref Message m)
@@ -104,23 +100,23 @@ namespace RepoUtl
             this.ProcessKeyPreviewHandler(ref m,
                 () =>
                 {
-                    if (tbFilter.Focused)
+                    if (this.tbFilter.Focused)
                     {
-                        if (tbFilter.Text.Length == 0)
-                            Close();
+                        if (this.tbFilter.Text.Length == 0)
+                            this.Close();
                         else
-                            tbFilter.Clear();
+                            this.tbFilter.Clear();
                     }
                     else
                     {
-                        tbFilter.Focus();
+                        this.tbFilter.Focus();
                     }
                     processed = true;
                 },
                 () =>
                 {
-                    DialogResult = DialogResult.OK;
-                    Close();
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
                     processed = true;
                 });
 

@@ -1,12 +1,5 @@
 ﻿using forms_ex;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RepoUtl
@@ -15,7 +8,7 @@ namespace RepoUtl
     {
         public WorkTreeForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         void WorkTreeForm_Load(object sender, EventArgs e)
@@ -26,12 +19,12 @@ namespace RepoUtl
 
         void WorkTreeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Properties.Settings.Default.WorktreesFormUI = uc.SaveUI();
+            Properties.Settings.Default.WorktreesFormUI = this.uc.SaveUI();
         }
 
         protected override bool ProcessKeyPreview(ref Message m)
         {
-            this.ProcessKeyPreviewHandler(ref m, () => Close());
+            this.ProcessKeyPreviewHandler(ref m, () => this.Close());
             return base.ProcessKeyPreview(ref m);
         }
     }

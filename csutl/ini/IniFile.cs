@@ -62,8 +62,3 @@ public interface IniFile
     Section GetSection(string name, string defaultComment = "");
     Section this[string name, string defaultComment = ""] { get; }
 }
-
-
-
-
-

@@ -2,10 +2,10 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows7.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<Platforms>AnyCPU;x64;x86</Platforms>
 		<ApplicationIcon>database.ico</ApplicationIcon>
 		<BaseOutputPath>..\..\..\..\bin\RepoUtl</BaseOutputPath>

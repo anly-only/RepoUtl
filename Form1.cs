@@ -1,8 +1,15 @@
-﻿using csutl;
+﻿using cmd_ini;
+using cmd_ini.Forms;
+using csutl;
 using forms_ex;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace RepoUtl
 {
@@ -13,16 +20,17 @@ namespace RepoUtl
         const string basePostfix = "-base";
         DocumentWatcher lastCopyWatcher = new DocumentWatcher();
         TextBox tbBranch;
+        CmdIniMenu cmm;
 
         string Root
         {
-            get => cbRepo.Text;
-            set => cbRepo.Text = value;
+            get => this.cbRepo.Text;
+            set => this.cbRepo.Text = value;
         }
 
         public Form1()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             this.tbBranch = new TextBox();
             this.tableLayoutPanel1.Controls.Add(this.tbBranch, 0, 1);
@@ -35,7 +43,9 @@ namespace RepoUtl
             this.tbBranch.ReadOnly = true;
             this.tbBranch.BorderStyle = BorderStyle.None;
 
-            lastCopyWatcher.OnFileChanged += this.LastCopyWatcher_OnFileChanged;
+            this.cmm = new CmdIniMenu(this.cm);
+
+            this.lastCopyWatcher.OnFileChanged += this.LastCopyWatcher_OnFileChanged;
             this.Activated += this.Form1_Activated;
         }
 
@@ -45,75 +55,75 @@ namespace RepoUtl
             //bnCorrectMergeInfo.Visible = false;
             //bnCorrectRevisions.Visible = false;
 #endif
-            toolTip.SetToolTip(bnExplore, TEXT.CommandsTooltip);
-            toolTip.SetToolTip(bnMergeChanges, TEXT.CommandsTooltip);
-            minWidth = Width;
-            cbRepo.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
-            cbPostfix.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
-            tbReport.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
-            tbBranch.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
-            LoadProperties();
-            ui_update();
-            ScanGitWorktrees();
-            ShowHelp();
+            this.toolTip.SetToolTip(this.bnExplore, TEXT.CommandsTooltip);
+            this.toolTip.SetToolTip(this.bnMergeChanges, TEXT.CommandsTooltip);
+            this.minWidth = this.Width;
+            this.cbRepo.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
+            this.cbPostfix.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
+            this.tbReport.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
+            this.tbBranch.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
+            this.LoadProperties();
+            this.ui_update();
+            this.ScanGitWorktrees();
+            this.ShowHelp();
         }
 
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveProperties();
+            this.SaveProperties();
         }
 
         void Form1_Activated(object sender, EventArgs e)
         {
-            tbBranch.Text = string.Empty;
-            ui_update();
+            this.tbBranch.Text = string.Empty;
+            this.ui_update();
         }
 
         void ui_update()
         {
             try
             {
-                var kind = RepoBase.GetRepoKind(Root, out string wc);
+                var kind = RepoBase.GetRepoKind(this.Root, out string wc);
 
-                bnIgnoreUnversioned.Visible = kind == RepoKind.Svn;
-                tbBranch.Visible = kind == RepoKind.Git;
+                this.bnIgnoreUnversioned.Visible = kind == RepoKind.Svn;
+                this.tbBranch.Visible = kind == RepoKind.Git;
 
-                if (kind == RepoKind.Git && string.IsNullOrEmpty(tbBranch.Text))
+                if (kind == RepoKind.Git && string.IsNullOrEmpty(this.tbBranch.Text))
                 {
-                    RepoGit repo = RepoBase.GetRepo(Root, Report) as RepoGit;
-                    tbBranch.Text = repo.CurrentBranch;
+                    RepoGit repo = RepoBase.GetRepo(this.Root, this.Report) as RepoGit;
+                    this.tbBranch.Text = repo.CurrentBranch;
                 }
 
                 //bnCorrectMergeInfo.Enabled = kind == RepoKind.Svn;
                 //bnCorrectRevisions.Enabled = kind == RepoKind.Svn;
 
-                bnWorkTree.Enabled = kind == RepoKind.Git;
+                this.bnWorkTree.Enabled = kind == RepoKind.Git;
 
-                bnChanges.Enabled = kind != RepoKind.None;
-                bnMergeChanges.Enabled = kind != RepoKind.None;
+                this.bnChanges.Enabled = kind != RepoKind.None;
+                this.bnMergeChanges.Enabled = kind != RepoKind.None;
 
-                WatcherUpdate();
+                this.WatcherUpdate();
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
         void WatcherUpdate()
         {
-            var last = GetTargetRoot(Root, true);
-            lastCopyWatcher.Start(last);
+            var last = this.GetTargetRoot(this.Root, true);
+            this.lastCopyWatcher.Start(last);
 
             if (Directory.Exists(last))
-                bnMergeChanges.Text = TEXT.MergeModified;
+                this.bnMergeChanges.Text = TEXT.MergeModified;
             else
-                bnMergeChanges.Text = TEXT.CopyModified;
+                this.bnMergeChanges.Text = TEXT.CopyModified;
         }
 
         void LastCopyWatcher_OnFileChanged()
         {
-            this.Invoke(() => ui_update());
+            this.Invoke(() => this.ui_update());
         }
 
 
@@ -128,16 +138,16 @@ namespace RepoUtl
 
             foreach (var item in repos)
                 if (Directory.Exists(item.RepoPath))
-                    cbRepo.Items.Add(item);
+                    this.cbRepo.Items.Add(item);
 
             if (Properties.Settings.Default.Postfix == null)
                 Properties.Settings.Default.Postfix = new System.Collections.Specialized.StringCollection();
 
             foreach (var item in Properties.Settings.Default.Postfix.Cast<string>().Distinct().Take(10))
-                cbPostfix.Items.Add(item);
+                this.cbPostfix.Items.Add(item);
 
-            if (cbRepo.Items.Count != 0)
-                cbRepo.SelectedIndex = 0;
+            if (this.cbRepo.Items.Count != 0)
+                this.cbRepo.SelectedIndex = 0;
 
             Properties.Settings.Default.Paths.Clear();
             Properties.Settings.Default.Postfix.Clear();
@@ -145,35 +155,35 @@ namespace RepoUtl
             if (!Properties.Settings.Default.FormUI.IsEmpty())
             {
                 ControlEx.ReadUI(this.GetControls(true), Properties.Settings.Default.FormUI);
-                tableLayoutPanel1.Dock = DockStyle.None; // set correct control positions and sizes
-                tableLayoutPanel1.Dock = DockStyle.Fill;
+                this.tableLayoutPanel1.Dock = DockStyle.None; // set correct control positions and sizes
+                this.tableLayoutPanel1.Dock = DockStyle.Fill;
             }
         }
 
         void SaveProperties()
         {
-            foreach (var item in cbRepo.Items.Cast<RepoComboItem>())
+            foreach (var item in this.cbRepo.Items.Cast<RepoComboItem>())
                 Properties.Settings.Default.Paths.Add(item.SaveToString());
 
-            foreach (var item in cbPostfix.Items)
+            foreach (var item in this.cbPostfix.Items)
                 Properties.Settings.Default.Postfix.Add(item as string);
 
-            Properties.Settings.Default.FormUI = ControlEx.SaveUI(this, cbPostfix, cbRepo, tbReport, tbBranch);
+            Properties.Settings.Default.FormUI = ControlEx.SaveUI(this, this.cbPostfix, this.cbRepo, this.tbReport, this.tbBranch);
 
             Properties.Settings.Default.Save();
         }
 
         RepoComboItem FindRepo(string path)
         {
-            var x = cbRepo.Items.Cast<RepoComboItem>().FirstOrDefault(a => a.RepoPath == path);
+            var x = this.cbRepo.Items.Cast<RepoComboItem>().FirstOrDefault(a => a.RepoPath == path);
             return x;
         }
 
-        void Report(string text) => UTL.Report(tbReport, text);
+        void Report(string text) => UTL.Report(this.tbReport, text);
 
         void EnumChanges(Action<RepoItem> back)
         {
-            IRepo repo = RepoBase.GetRepo(Root, Report);
+            IRepo repo = RepoBase.GetRepo(this.Root, this.Report);
             try
             {
                 int count = 0;
@@ -182,11 +192,11 @@ namespace RepoUtl
                     back.Invoke(a);
                     count++;
                 });
-                Report(count.ToString() + " files");
+                this.Report(count.ToString() + " files");
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -196,24 +206,24 @@ namespace RepoUtl
             {
                 Cursor.Current = Cursors.WaitCursor;
 
-                if (!Directory_Exists(Root))
+                if (!this.Directory_Exists(this.Root))
                     return;
 
-                EnumChanges(a =>
+                this.EnumChanges(a =>
                 {
-                    string text = a.Path.Substring(Root.Length + 1);
+                    string text = a.Path.Substring(this.Root.Length + 1);
                     if (a.Status == ItemStatus.Unversioned)
                         text += "  unversioned";
-                    Report(text);
+                    this.Report(text);
                 });
 
-                var last = GetLastTargetRoot(Root);
+                var last = GetLastTargetRoot(this.Root);
                 if (Directory.Exists(last))
-                    Report($"Last copy: {last}");
+                    this.Report($"Last copy: {last}");
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
             finally
             {
@@ -223,61 +233,61 @@ namespace RepoUtl
 
         private void CmCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var last = GetTargetRoot(Root, true);
-            bnCopyChanges.Enabled = Directory.Exists(last);
+            var last = this.GetTargetRoot(this.Root, true);
+            this.bnCopyChanges.Enabled = Directory.Exists(last);
         }
 
-        void bnCopyChanges_Click(object sender, EventArgs e) => Copy(false);
+        void bnCopyChanges_Click(object sender, EventArgs e) => this.Copy(false);
 
-        void bnMergeChanges_Click(object sender, EventArgs e) => Copy(true);
+        void bnMergeChanges_Click(object sender, EventArgs e) => this.Copy(true);
 
         // changes are merged into previous folder, if merge == true and postfix not changed
         void Copy(bool merge)
         {
-            if (!Directory_Exists(Root))
+            if (!this.Directory_Exists(this.Root))
                 return;
 
             try
             {
-                string root2 = GetTargetRoot(Root, merge);
+                string root2 = this.GetTargetRoot(this.Root, merge);
                 string root3 = root2 + " " + basePostfix;
 
-                Report($"");
-                Report($"{root2}");
+                this.Report($"");
+                this.Report($"{root2}");
 
-                IRepo repo = RepoBase.GetRepo(Root, Report);
+                IRepo repo = RepoBase.GetRepo(this.Root, this.Report);
 
                 Cursor.Current = Cursors.WaitCursor;
-                bool copyOriginal = cbCopyOriginal.Checked;
+                bool copyOriginal = this.cbCopyOriginal.Checked;
                 int count = 0;
                 repo.EnumChanges(item =>
                 {
-                    Report(item.Path.Substring(Root.Length + 1));
+                    this.Report(item.Path.Substring(this.Root.Length + 1));
                     if (File.Exists(item.Path))
                     {
-                        string s = $"{root2}{item.Path.Substring(Root.Length)}";
+                        string s = $"{root2}{item.Path.Substring(this.Root.Length)}";
                         Directory.CreateDirectory(Path.GetDirectoryName(s));
                         File.Copy(item.Path, s, true);
                     }
 
                     if (copyOriginal && item.Status == ItemStatus.Modified)
                     {
-                        string s = $"{root3}{item.Path.Substring(Root.Length)}";
+                        string s = $"{root3}{item.Path.Substring(this.Root.Length)}";
                         Directory.CreateDirectory(Path.GetDirectoryName(s));
                         repo.CopyOriginalTo(item, s);
                     }
                     count++;
                 });
-                Report(count.ToString() + " files");
+                this.Report(count.ToString() + " files");
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
             finally
             {
                 Cursor.Current = Cursors.Default;
-                ui_update();
+                this.ui_update();
             }
         }
 
@@ -288,7 +298,7 @@ namespace RepoUtl
             if (string.IsNullOrEmpty(root))
                 return string.Empty;
 
-            var postfix = cbPostfix.Text.Trim();
+            var postfix = this.cbPostfix.Text.Trim();
             if (string.IsNullOrWhiteSpace(postfix))
                 postfix = "modified";
 
@@ -352,19 +362,19 @@ namespace RepoUtl
 
         void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tbReport.Clear();
+            this.tbReport.Clear();
         }
 
         void bnIgnoreUnversioned_Click(object sender, EventArgs e)
         {
             try
             {
-                IRepo repo = RepoBase.GetRepo(Root, Report);
+                IRepo repo = RepoBase.GetRepo(this.Root, this.Report);
                 repo.IgnoreUnversioned();
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -372,19 +382,19 @@ namespace RepoUtl
         {
             try
             {
-                if (UTL.Browse(Root, out var s, TEXT.SelectRepo))
+                if (UTL.Browse(this.Root, out var s, TEXT.SelectRepo))
                 {
                     var path = RepoBase.GetWorkingCopyFolder(s);
-                    RepoComboItem repo = FindRepo(path);
+                    RepoComboItem repo = this.FindRepo(path);
                     if (repo == null)
                         repo = new RepoComboItem(path);
-                    cbRepo.SelectItem(repo);
-                    ui_update();
+                    this.cbRepo.SelectItem(repo);
+                    this.ui_update();
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -409,12 +419,12 @@ namespace RepoUtl
                     if (File.Exists(path))
                         path = Path.GetDirectoryName(path);
 
-                    Root = path;
+                    this.Root = path;
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -426,7 +436,7 @@ namespace RepoUtl
             if (section.Bool(SettingsIni.Key.CloseDuplicates, true))
                 UTL.CloseDuplicatedExplorerWindows();
 
-            UTL.Explore(Root,
+            UTL.Explore(this.Root,
                 section.Bool(SettingsIni.Key.Select, true),
                 section.Bool(SettingsIni.Key.TrySingleWindow, true));
         }
@@ -435,7 +445,7 @@ namespace RepoUtl
         {
             var text = Clipboard.GetText();
             var ret = SvnMergeInfo.MinimizeMergeInfo(text);
-            ReportResult(text, ret);
+            this.ReportResult(text, ret);
         }
 
 
@@ -443,23 +453,23 @@ namespace RepoUtl
         {
             var text = Clipboard.GetText();
             var ret = SvnMergeInfo.MinimizeRevisions(text);
-            ReportResult(text, ret);
+            this.ReportResult(text, ret);
         }
 
         void ReportResult(string text, string ret)
         {
             if (ret.IsEmpty())
             {
-                Report("Clipboard have text in wrong format.");
+                this.Report("Clipboard have text in wrong format.");
             }
             else if (ret != text)
             {
                 Clipboard.SetText(ret);
-                Report("The result in clipboard.");
+                this.Report("The result in clipboard.");
             }
             else
             {
-                Report("No changes.");
+                this.Report("No changes.");
             }
         }
 
@@ -468,7 +478,7 @@ namespace RepoUtl
             bool yes = Directory.Exists(folder);
 
             if (!yes && report)
-                Report($"Folder is not exists: {folder}");
+                this.Report($"Folder is not exists: {folder}");
 
             return yes;
         }
@@ -477,38 +487,38 @@ namespace RepoUtl
         {
             try
             {
-                if (RepoBase.GetRepoKind(Root, out var wc) == RepoKind.Git)
+                if (RepoBase.GetRepoKind(this.Root, out var wc) == RepoKind.Git)
                 {
                     var f = new WorkTreeForm();
-                    f.uc.OnReport = Report;
-                    f.uc.RepoWorkingCopyPath = Root;
+                    f.uc.OnReport = this.Report;
+                    f.uc.RepoWorkingCopyPath = this.Root;
                     f.uc.OnWorktreePathChanged += this.Uc_OnWorktreePathChanged;
                     f.ShowDialog();
-                    ui_update();
+                    this.ui_update();
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
         void ScanGitWorktrees()
         {
-            var kind = RepoBase.GetRepoKind(Root, out string wc);
+            var kind = RepoBase.GetRepoKind(this.Root, out string wc);
             if (kind == RepoKind.Git)
             {
                 var ini = SettingsIni.GetIni();
                 var sec = ini.GetSection(SettingsIni.Key.Git);
                 if (sec.Bool(SettingsIni.Key.AutoScanWorktrees, true))
                 {
-                    var repo = RepoBase.GetRepo(wc, Report) as IRepoGit;
+                    var repo = RepoBase.GetRepo(wc, this.Report) as IRepoGit;
                     var wts = repo.GetWorkTrees();
                     foreach (var item in wts)
                     {
                         string s = RepoGit.GetWorktreePath(wc, item.Name);
-                        if (!cbRepo.Items.Cast<RepoComboItem>().Any(a => a.RepoPath == s))
-                            cbRepo.Items.Add(new RepoComboItem(s));
+                        if (!this.cbRepo.Items.Cast<RepoComboItem>().Any(a => a.RepoPath == s))
+                            this.cbRepo.Items.Add(new RepoComboItem(s));
                     }
                 }
             }
@@ -518,38 +528,38 @@ namespace RepoUtl
         {
             if (path != null)
             {
-                RepoComboItem repo = FindRepo(path);
+                RepoComboItem repo = this.FindRepo(path);
                 if (repo == null)
                     repo = new RepoComboItem(path);
-                cbRepo.SelectItem(repo);
+                this.cbRepo.SelectItem(repo);
             }
         }
 
         void tbLocalPath_TextUpdate(object sender, EventArgs e)
         {
-            ui_update();
+            this.ui_update();
         }
 
         void cbRepo_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                tbBranch.Text = string.Empty;
-                if (cbRepo.SelectedIndex > 0)
+                this.tbBranch.Text = string.Empty;
+                if (this.cbRepo.SelectedIndex > 0)
                 {
-                    cbRepo.SelectItem(cbRepo.SelectedItem); // move item to begin of list
+                    this.cbRepo.SelectItem(this.cbRepo.SelectedItem); // move item to begin of list
                 }
                 else
                 {
-                    var x = cbRepo.SelectedItem as RepoComboItem;
-                    cbPostfix.SelectItem(x.Postfix);
-                    ui_update();
+                    var x = this.cbRepo.SelectedItem as RepoComboItem;
+                    this.cbPostfix.SelectItem(x.Postfix);
+                    this.ui_update();
                 }
-                ScanGitWorktrees();
+                this.ScanGitWorktrees();
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
@@ -557,148 +567,118 @@ namespace RepoUtl
         {
             try
             {
-                if (cbPostfix.SelectedIndex > 0)
+                if (this.cbPostfix.SelectedIndex > 0)
                 {
-                    cbPostfix.SelectItem(cbPostfix.SelectedItem); // move item to begin of list
+                    this.cbPostfix.SelectItem(this.cbPostfix.SelectedItem); // move item to begin of list
                 }
                 else
                 {
-                    OnPostfixChanged();
+                    this.OnPostfixChanged();
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
-        void cbPostfix_TextChanged(object sender, EventArgs e) => OnPostfixChanged();
+        void cbPostfix_TextChanged(object sender, EventArgs e) => this.OnPostfixChanged();
 
         void OnPostfixChanged()
         {
             try
             {
-                var repo = cbRepo.SelectedItem as RepoComboItem;
+                var repo = this.cbRepo.SelectedItem as RepoComboItem;
                 if (repo != null)
-                    repo.Postfix = cbPostfix.Text;
-                ui_update();
+                    repo.Postfix = this.cbPostfix.Text;
+                this.ui_update();
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
 
         protected override bool ProcessKeyPreview(ref Message m)
         {
-            this.ProcessKeyPreviewHandler(ref m, () => WindowState = FormWindowState.Minimized);
+            this.ProcessKeyPreviewHandler(ref m, () => this.WindowState = FormWindowState.Minimized);
             return base.ProcessKeyPreview(ref m);
         }
 
         void Form1_SizeChanged(object sender, EventArgs e)
         {
-            if (Size.Width < minWidth)
-                Width = minWidth;
+            if (this.Size.Width < this.minWidth)
+                this.Width = this.minWidth;
 
-            cbRepo.SelectionLength = 0; // avoid select-all side effect
-            cbPostfix.SelectionLength = 0;
+            this.cbRepo.SelectionLength = 0; // avoid select-all side effect
+            this.cbPostfix.SelectionLength = 0;
         }
 
         void Form1_Shown(object sender, EventArgs e)
         {
-            cbRepo.SelectionLength = 0; // avoid select-all side effect
-            cbPostfix.SelectionLength = 0;
+            this.cbRepo.SelectionLength = 0; // avoid select-all side effect
+            this.cbPostfix.SelectionLength = 0;
         }
 
         #region Commands
-        IEnumerable<Cmd> GetCommands() => (new CmdIni(Root, Report)).GetCommands(CmdIni.IniFileFullName);
-
-        private void cm_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        IEnumerable<Cmd> GetCommands()
         {
-            ClearCm();
-            cm.Items.Add("dummy");
-            if (cm.Tag != null)
-            {
-                ExecuteCmd((Cmd)cm.Tag);
-                cm.Tag = null;
-            }
+            var m = new CmdMacros();
+            m.SetMacro("root", this.Root);
+            var file = Path.Combine(App.AddDataFolder, "commands.ini");
+            if (!File.Exists(file))
+                CreateIniFile(file);
+            var ini = new CmdIni(file, m, this.Report);
+            return ini.GetCommands();
         }
 
-        private void ClearCm()
+        static void CreateIniFile(string path)
         {
-            foreach (ToolStripItem item in cm.Items)
-                item.MouseDown -= C_MouseDown;
-            cm.Items.Clear();
+            CmdIniHelper.CreateIniFile(
+                path,
+                CmdIniHelper.GetExampleText(),
+                CmdIniHelper.Separator,
+                CmdIniHelper.GetGitCommandsText(),
+                CmdIniHelper.Separator,
+                CmdIniHelper.GetExploreRootText(),
+                CmdIniHelper.Separator,
+                CmdIniHelper.GetExploreIniText(path),
+                ""
+                );
         }
 
         private void cm_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ClearCm();
-            bool prevSeparator = true;
-            foreach (Cmd cmd in GetCommands())
-            {
-                if (cmd.IsSeparator)
-                {
-                    if (!prevSeparator)
-                        cm.Items.Add(new ToolStripSeparator());
-                    prevSeparator = true;
-                }
-                else
-                {
-                    var c = cm.Items.Add(cmd.Name);
-                    c.Enabled = cmd.Enabled;
-                    c.Tag = cmd;
-                    c.MouseDown += C_MouseDown;
-                    prevSeparator = false;
-                }
-            }
+            int ix = this.cm.Items.Cast<ToolStripItem>().IndexOf(a => a.Text == "--dummy--");
+            if (ix != -1)
+                this.cm.Items.RemoveAt(ix);
+
+            this.cmm.cm_Opening(sender, this.GetCommands());
         }
 
-        private void C_MouseDown(object sender, MouseEventArgs e)
+        private void cm_Closed(object sender, ToolStripDropDownClosedEventArgs e)
         {
-            var c = (ToolStripItem)sender;
-            var cmd = (Cmd)c.Tag;
-            cm.Tag = cmd;
-        }
+            if (this.cm.Tag is Cmd cmd)
+            {
+                this.cmm.cm_Closed(cmd, Enumerable.Empty<string>(), this.tableLayoutPanel1, this.Report);
+            }
 
-        private void ExecuteCmd(Cmd cmd)
-        {
-            try
-            {
-                Process p = new Process();
-                p.StartInfo.FileName = cmd.File;
-                p.StartInfo.Arguments = cmd.Args;
-                p.StartInfo.UseShellExecute = true;
-                p.Start();
-
-                if (cmd.WaitForExit)
-                {
-                    tableLayoutPanel1.Enabled = false;
-                    p.WaitForExit();
-                }
-            }
-            catch (Exception ee)
-            {
-                Report(ee.Message);
-            }
-            finally
-            {
-                tableLayoutPanel1.Enabled = true;
-            }
+            if (this.cm.Items.Count == 0)
+                this.cm.Items.Add(new ToolStripButton("--dummy--"));
         }
 
         #endregion
 
         private void cbPostfix_Leave(object sender, EventArgs e)
         {
-            int ix = cbPostfix.Items.IndexOf(cbPostfix.Text);
+            int ix = this.cbPostfix.Items.IndexOf(this.cbPostfix.Text);
             if (ix != 0)
             {
-                var s = cbPostfix.Text;
+                var s = this.cbPostfix.Text;
                 if (ix != -1)
-                    cbPostfix.Items.RemoveAt(ix);
-                cbPostfix.Items.Insert(0, s);
-                cbPostfix.SelectedIndex = 0;
+                    this.cbPostfix.Items.RemoveAt(ix);
+                this.cbPostfix.Items.Insert(0, s);
+                this.cbPostfix.SelectedIndex = 0;
             }
         }
 
@@ -715,12 +695,12 @@ namespace RepoUtl
                         File.WriteAllText(helpfile, TEXT.Help);
 
                     var help = File.ReadAllText(helpfile);
-                    Report(help);
+                    this.Report(help);
                 }
             }
             catch (Exception ee)
             {
-                Report(ee.Message);
+                this.Report(ee.Message);
             }
         }
     }

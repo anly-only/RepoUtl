@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.bnChanges = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.cbRepo = new System.Windows.Forms.ComboBox();
@@ -55,21 +55,22 @@
             // 
             // bnChanges
             // 
-            this.bnChanges.Location = new System.Drawing.Point(3, 68);
+            this.bnChanges.Location = new System.Drawing.Point(3, 93);
+            this.bnChanges.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnChanges.Name = "bnChanges";
-            this.bnChanges.Size = new System.Drawing.Size(142, 29);
+            this.bnChanges.Size = new System.Drawing.Size(160, 42);
             this.bnChanges.TabIndex = 4;
             this.bnChanges.Text = "Show modified";
             this.bnChanges.UseVisualStyleBackColor = true;
-            this.bnChanges.Click += new System.EventHandler(this.Status_Click);
+            this.bnChanges.Click += this.Status_Click;
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 148F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 148F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 137F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 137F));
             this.tableLayoutPanel1.Controls.Add(this.cbRepo, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.cbCopyOriginal, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.tbReport, 0, 4);
@@ -82,31 +83,32 @@
             this.tableLayoutPanel1.Controls.Add(this.bnWorkTree, 2, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(540, 354);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(608, 509);
             this.tableLayoutPanel1.TabIndex = 15;
             // 
             // cbRepo
             // 
             this.cbRepo.AllowDrop = true;
-            this.cbRepo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbRepo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.tableLayoutPanel1.SetColumnSpan(this.cbRepo, 4);
             this.cbRepo.FormattingEnabled = true;
-            this.cbRepo.Location = new System.Drawing.Point(3, 3);
+            this.cbRepo.Location = new System.Drawing.Point(3, 4);
+            this.cbRepo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbRepo.Name = "cbRepo";
-            this.cbRepo.Size = new System.Drawing.Size(534, 24);
+            this.cbRepo.Size = new System.Drawing.Size(602, 31);
             this.cbRepo.TabIndex = 0;
-            this.cbRepo.SelectedIndexChanged += new System.EventHandler(this.cbRepo_SelectedIndexChanged);
-            this.cbRepo.TextUpdate += new System.EventHandler(this.tbLocalPath_TextUpdate);
-            this.cbRepo.DragDrop += new System.Windows.Forms.DragEventHandler(this.tbLocalPath_DragDrop);
-            this.cbRepo.DragEnter += new System.Windows.Forms.DragEventHandler(this.tbLocalPath_DragEnter);
+            this.cbRepo.SelectedIndexChanged += this.cbRepo_SelectedIndexChanged;
+            this.cbRepo.TextUpdate += this.tbLocalPath_TextUpdate;
+            this.cbRepo.DragDrop += this.tbLocalPath_DragDrop;
+            this.cbRepo.DragEnter += this.tbLocalPath_DragEnter;
             // 
             // cbCopyOriginal
             // 
@@ -114,166 +116,168 @@
             this.cbCopyOriginal.AutoSize = true;
             this.cbCopyOriginal.Checked = true;
             this.cbCopyOriginal.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCopyOriginal.Location = new System.Drawing.Point(174, 103);
+            this.cbCopyOriginal.Location = new System.Drawing.Point(215, 143);
+            this.cbCopyOriginal.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbCopyOriginal.Name = "cbCopyOriginal";
-            this.cbCopyOriginal.Size = new System.Drawing.Size(95, 20);
+            this.cbCopyOriginal.Size = new System.Drawing.Size(67, 27);
             this.cbCopyOriginal.TabIndex = 7;
             this.cbCopyOriginal.Text = "base";
             this.cbCopyOriginal.UseVisualStyleBackColor = true;
             // 
             // tbReport
             // 
-            this.tbReport.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.tableLayoutPanel1.SetColumnSpan(this.tbReport, 4);
             this.tbReport.ContextMenuStrip = this.cmReport;
-            this.tbReport.Location = new System.Drawing.Point(3, 138);
+            this.tbReport.Location = new System.Drawing.Point(3, 193);
+            this.tbReport.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tbReport.Multiline = true;
             this.tbReport.Name = "tbReport";
             this.tbReport.ReadOnly = true;
             this.tbReport.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbReport.Size = new System.Drawing.Size(534, 213);
+            this.tbReport.Size = new System.Drawing.Size(602, 312);
             this.tbReport.TabIndex = 0;
             this.tbReport.TabStop = false;
             // 
             // cmReport
             // 
             this.cmReport.ImageScalingSize = new System.Drawing.Size(19, 19);
-            this.cmReport.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearToolStripMenuItem});
+            this.cmReport.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.clearToolStripMenuItem });
             this.cmReport.Name = "cmReport";
-            this.cmReport.Size = new System.Drawing.Size(113, 28);
+            this.cmReport.Size = new System.Drawing.Size(120, 32);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(119, 28);
             this.clearToolStripMenuItem.Text = "Clear";
-            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            this.clearToolStripMenuItem.Click += this.clearToolStripMenuItem_Click;
             // 
             // bnIgnoreUnversioned
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.bnIgnoreUnversioned, 2);
-            this.bnIgnoreUnversioned.Location = new System.Drawing.Point(3, 33);
+            this.bnIgnoreUnversioned.Location = new System.Drawing.Point(3, 43);
+            this.bnIgnoreUnversioned.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnIgnoreUnversioned.Name = "bnIgnoreUnversioned";
-            this.bnIgnoreUnversioned.Size = new System.Drawing.Size(290, 29);
+            this.bnIgnoreUnversioned.Size = new System.Drawing.Size(326, 42);
             this.bnIgnoreUnversioned.TabIndex = 1;
             this.bnIgnoreUnversioned.Text = "Svn: ignore unversioned folders";
             this.bnIgnoreUnversioned.UseVisualStyleBackColor = true;
-            this.bnIgnoreUnversioned.Click += new System.EventHandler(this.bnIgnoreUnversioned_Click);
+            this.bnIgnoreUnversioned.Click += this.bnIgnoreUnversioned_Click;
             // 
-            // bnCopyChanges
+            // bnMergeChanges
             // 
             this.bnMergeChanges.ContextMenuStrip = this.cmCopy;
-            this.bnMergeChanges.Location = new System.Drawing.Point(151, 68);
-            this.bnMergeChanges.Name = "bnCopyChanges";
-            this.bnMergeChanges.Size = new System.Drawing.Size(142, 29);
+            this.bnMergeChanges.Location = new System.Drawing.Point(169, 93);
+            this.bnMergeChanges.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.bnMergeChanges.Name = "bnMergeChanges";
+            this.bnMergeChanges.Size = new System.Drawing.Size(160, 42);
             this.bnMergeChanges.TabIndex = 5;
             this.bnMergeChanges.Text = "Copy modified";
             this.bnMergeChanges.UseVisualStyleBackColor = true;
-            this.bnMergeChanges.Click += new System.EventHandler(this.bnMergeChanges_Click);
+            this.bnMergeChanges.Click += this.bnMergeChanges_Click;
             // 
             // cmCopy
             // 
             this.cmCopy.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.cmCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bnCopyChanges});
+            this.cmCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.bnCopyChanges });
             this.cmCopy.Name = "cm";
-            this.cmCopy.Size = new System.Drawing.Size(218, 56);
+            this.cmCopy.Size = new System.Drawing.Size(312, 32);
             this.cmCopy.Opening += this.CmCopy_Opening;
             // 
-            // bnCopyNew
+            // bnCopyChanges
             // 
-            this.bnCopyChanges.Name = "bnCopyNew";
-            this.bnCopyChanges.Size = new System.Drawing.Size(217, 24);
+            this.bnCopyChanges.Name = "bnCopyChanges";
+            this.bnCopyChanges.Size = new System.Drawing.Size(311, 28);
             this.bnCopyChanges.Text = "Copy modified into new folder";
-            this.bnCopyChanges.Click += new System.EventHandler(this.bnCopyChanges_Click);
+            this.bnCopyChanges.Click += this.bnCopyChanges_Click;
             // 
             // bnExplore
             // 
             this.bnExplore.ContextMenuStrip = this.cm;
-            this.bnExplore.Location = new System.Drawing.Point(421, 33);
+            this.bnExplore.Location = new System.Drawing.Point(472, 43);
+            this.bnExplore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnExplore.Name = "bnExplore";
-            this.bnExplore.Size = new System.Drawing.Size(116, 29);
+            this.bnExplore.Size = new System.Drawing.Size(130, 42);
             this.bnExplore.TabIndex = 3;
             this.bnExplore.Text = "Explore...";
             this.bnExplore.UseVisualStyleBackColor = true;
-            this.bnExplore.Click += new System.EventHandler(this.bnExplore_Click);
+            this.bnExplore.Click += this.bnExplore_Click;
             // 
             // cm
             // 
             this.cm.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aaaToolStripMenuItem});
+            this.cm.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aaaToolStripMenuItem });
             this.cm.Name = "cm";
-            this.cm.Size = new System.Drawing.Size(103, 28);
-            this.cm.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.cm_Closed);
-            this.cm.Opening += new System.ComponentModel.CancelEventHandler(this.cm_Opening);
+            this.cm.Size = new System.Drawing.Size(167, 32);
+            this.cm.Closed += this.cm_Closed;
+            this.cm.Opening += this.cm_Opening;
             // 
             // aaaToolStripMenuItem
             // 
             this.aaaToolStripMenuItem.Name = "aaaToolStripMenuItem";
-            this.aaaToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
-            this.aaaToolStripMenuItem.Text = "aaa";
+            this.aaaToolStripMenuItem.Size = new System.Drawing.Size(166, 28);
+            this.aaaToolStripMenuItem.Text = "--dummy--";
             // 
             // bnBrowse
             // 
-            this.bnBrowse.Location = new System.Drawing.Point(299, 33);
+            this.bnBrowse.Location = new System.Drawing.Point(335, 43);
+            this.bnBrowse.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnBrowse.Name = "bnBrowse";
-            this.bnBrowse.Size = new System.Drawing.Size(115, 29);
+            this.bnBrowse.Size = new System.Drawing.Size(129, 42);
             this.bnBrowse.TabIndex = 2;
             this.bnBrowse.Text = "Select...";
             this.bnBrowse.UseVisualStyleBackColor = true;
-            this.bnBrowse.Click += new System.EventHandler(this.bnBrowse_Click);
+            this.bnBrowse.Click += this.bnBrowse_Click;
             // 
             // cbPostfix
             // 
-            this.cbPostfix.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbPostfix.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.tableLayoutPanel1.SetColumnSpan(this.cbPostfix, 2);
-            this.cbPostfix.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbPostfix.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.cbPostfix.ForeColor = System.Drawing.SystemColors.WindowText;
             this.cbPostfix.FormattingEnabled = true;
-            this.cbPostfix.Location = new System.Drawing.Point(299, 68);
+            this.cbPostfix.Location = new System.Drawing.Point(335, 93);
+            this.cbPostfix.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbPostfix.Name = "cbPostfix";
-            this.cbPostfix.Size = new System.Drawing.Size(238, 28);
+            this.cbPostfix.Size = new System.Drawing.Size(270, 32);
             this.cbPostfix.TabIndex = 6;
-            this.cbPostfix.SelectedIndexChanged += new System.EventHandler(this.cbPostfix_SelectedIndexChanged);
-            this.cbPostfix.TextChanged += new System.EventHandler(this.cbPostfix_TextChanged);
-            this.cbPostfix.Leave += new System.EventHandler(this.cbPostfix_Leave);
+            this.cbPostfix.SelectedIndexChanged += this.cbPostfix_SelectedIndexChanged;
+            this.cbPostfix.TextChanged += this.cbPostfix_TextChanged;
+            this.cbPostfix.Leave += this.cbPostfix_Leave;
             // 
             // bnWorkTree
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.bnWorkTree, 2);
-            this.bnWorkTree.Location = new System.Drawing.Point(299, 103);
+            this.bnWorkTree.Location = new System.Drawing.Point(335, 143);
+            this.bnWorkTree.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnWorkTree.Name = "bnWorkTree";
-            this.bnWorkTree.Size = new System.Drawing.Size(238, 29);
+            this.bnWorkTree.Size = new System.Drawing.Size(268, 42);
             this.bnWorkTree.TabIndex = 8;
             this.bnWorkTree.Text = "Git: worktrees...";
             this.bnWorkTree.UseVisualStyleBackColor = true;
-            this.bnWorkTree.Click += new System.EventHandler(this.bnWorkTree_Click);
+            this.bnWorkTree.Click += this.bnWorkTree_Click;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 354);
+            this.ClientSize = new System.Drawing.Size(608, 509);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Repo utilities";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.Shown += new System.EventHandler(this.Form1_Shown);
-            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+            this.FormClosing += this.Form1_FormClosing;
+            this.Load += this.Form1_Load;
+            this.Shown += this.Form1_Shown;
+            this.SizeChanged += this.Form1_SizeChanged;
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.cmReport.ResumeLayout(false);
             this.cmCopy.ResumeLayout(false);
             this.cm.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
         #endregion
 

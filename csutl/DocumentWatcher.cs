@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -12,7 +11,7 @@ namespace csutl
         FileSystemWatcher watcher;
         Timer timer;
 
-        string Path => watcher != null ? watcher.Path : string.Empty;
+        string Path => this.watcher != null ? this.watcher.Path : string.Empty;
         string FullFileName { get; set; } = String.Empty;
         double Delay { get; set; } = 2000;
 
@@ -21,76 +20,76 @@ namespace csutl
         internal void Start(string file)
         {
             var path = System.IO.Path.GetDirectoryName(file);
-            if (Path != path)
+            if (this.Path != path)
             {
-                Stop();
+                this.Stop();
                 if (Directory.Exists(path))
                 {
-                    watcher = new FileSystemWatcher() { Path = path };
-                    watcher.Changed += this.Watcher_Changed;
-                    watcher.Created += this.Watcher_Changed;
-                    watcher.Deleted += this.Watcher_Changed;
-                    watcher.Renamed += this.Watcher_Changed;
+                    this.watcher = new FileSystemWatcher() { Path = path };
+                    this.watcher.Changed += this.Watcher_Changed;
+                    this.watcher.Created += this.Watcher_Changed;
+                    this.watcher.Deleted += this.Watcher_Changed;
+                    this.watcher.Renamed += this.Watcher_Changed;
 
-                    watcher.EnableRaisingEvents = true;
+                    this.watcher.EnableRaisingEvents = true;
                 }
             }
-            FullFileName = file;
+            this.FullFileName = file;
         }
 
         internal void Stop()
         {
-            DisposeTimer();
+            this.DisposeTimer();
 
-            if (watcher != null)
+            if (this.watcher != null)
             {
-                watcher.EnableRaisingEvents = false;
-                watcher.Changed -= Watcher_Changed;
-                watcher.Created -= this.Watcher_Changed;
-                watcher.Deleted -= this.Watcher_Changed;
-                watcher.Renamed -= this.Watcher_Changed;
-                watcher.Dispose();
-                watcher = null;
-                FullFileName = string.Empty;
+                this.watcher.EnableRaisingEvents = false;
+                this.watcher.Changed -= this.Watcher_Changed;
+                this.watcher.Created -= this.Watcher_Changed;
+                this.watcher.Deleted -= this.Watcher_Changed;
+                this.watcher.Renamed -= this.Watcher_Changed;
+                this.watcher.Dispose();
+                this.watcher = null;
+                this.FullFileName = string.Empty;
             }
         }
 
         void DisposeTimer()
         {
-            if (timer != null)
+            if (this.timer != null)
             {
-                timer.Elapsed -= WatcherTimer_Elapsed;
-                timer.Dispose();
-                timer = null;
+                this.timer.Elapsed -= this.WatcherTimer_Elapsed;
+                this.timer.Dispose();
+                this.timer = null;
             }
         }
 
         void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (FullFileName == e.FullPath)
+            if (this.FullFileName == e.FullPath)
             {
                 Debug.WriteLine($"Watcher_Changed: {e.ChangeType}, {e.FullPath}");
-                if (timer == null)
+                if (this.timer == null)
                 {
-                    timer = new Timer()
+                    this.timer = new Timer()
                     {
-                        Interval = Delay,
+                        Interval = this.Delay,
                         AutoReset = false
                     };
-                    timer.Elapsed += WatcherTimer_Elapsed;
+                    this.timer.Elapsed += this.WatcherTimer_Elapsed;
                 }
                 else
                 {
-                    timer.Stop();
+                    this.timer.Stop();
                 }
 
-                timer.Start();
+                this.timer.Start();
             }
         }
         private void WatcherTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             Debug.WriteLine($"WatcherTimer_Elapsed");
-            DisposeTimer();
+            this.DisposeTimer();
             OnFileChanged?.Invoke();
         }
     }

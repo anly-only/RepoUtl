@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace RepoUtl
 {
     internal static class Program
