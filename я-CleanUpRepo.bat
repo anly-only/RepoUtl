@@ -3,3 +3,5 @@ git reflog expire --all --expire=now
 
 # Perform garbage collection
 git gc --prune=now --aggressive
+
+PAUSE
