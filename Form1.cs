@@ -15,7 +15,8 @@ namespace RepoUtl
 {
     public partial class Form1 : Form
     {
-        int minWidth;
+        int minWidth => bnExplore.Right + 20;
+
         ToolTip toolTip = new ToolTip();
         const string basePostfix = "-base";
         DocumentWatcher lastCopyWatcher = new DocumentWatcher();
@@ -57,7 +58,6 @@ namespace RepoUtl
 #endif
             this.toolTip.SetToolTip(this.bnExplore, TEXT.CommandsTooltip);
             this.toolTip.SetToolTip(this.bnMergeChanges, TEXT.CommandsTooltip);
-            this.minWidth = this.Width;
             this.cbRepo.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
             this.cbPostfix.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
             this.tbReport.MouseWheel += (c, ee) => (c as Control).Zoom_MouseWheel(ee);
