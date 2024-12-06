@@ -15,7 +15,8 @@ namespace RepoUtl
 {
     public partial class Form1 : Form
     {
-        int minWidth => bnExplore.Right + 20;
+        int minWidth => bnMergeChanges.Right + bnWorkTree.Width + 30;
+        int minHeight => tbReport.Top + 100;
 
         ToolTip toolTip = new ToolTip();
         const string basePostfix = "-base";
@@ -43,6 +44,8 @@ namespace RepoUtl
             this.tbBranch.Text = "Svn: ignore unversioned folders";
             this.tbBranch.ReadOnly = true;
             this.tbBranch.BorderStyle = BorderStyle.None;
+            this.tbBranch.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            this.tableLayoutPanel1.SetColumnSpan(this.tbBranch, 3);
 
             this.cmm = new CmdIniMenu(this.cm);
 
@@ -609,6 +612,9 @@ namespace RepoUtl
         {
             if (this.Size.Width < this.minWidth)
                 this.Width = this.minWidth;
+
+            if (this.Size.Height < this.minHeight)
+                this.Height = this.minHeight;
 
             this.cbRepo.SelectionLength = 0; // avoid select-all side effect
             this.cbPostfix.SelectionLength = 0;

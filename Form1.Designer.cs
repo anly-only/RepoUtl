@@ -58,7 +58,7 @@
             this.bnChanges.Location = new System.Drawing.Point(3, 93);
             this.bnChanges.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnChanges.Name = "bnChanges";
-            this.bnChanges.Size = new System.Drawing.Size(160, 42);
+            this.bnChanges.Size = new System.Drawing.Size(159, 42);
             this.bnChanges.TabIndex = 4;
             this.bnChanges.Text = "Show modified";
             this.bnChanges.UseVisualStyleBackColor = true;
@@ -66,9 +66,10 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 4;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
+            this.tableLayoutPanel1.ColumnCount = 5;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 165F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 165F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 137F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 137F));
             this.tableLayoutPanel1.Controls.Add(this.cbRepo, 0, 0);
@@ -77,10 +78,10 @@
             this.tableLayoutPanel1.Controls.Add(this.bnIgnoreUnversioned, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.bnChanges, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.bnMergeChanges, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.bnExplore, 3, 1);
-            this.tableLayoutPanel1.Controls.Add(this.bnBrowse, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.cbPostfix, 2, 2);
-            this.tableLayoutPanel1.Controls.Add(this.bnWorkTree, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.bnExplore, 4, 1);
+            this.tableLayoutPanel1.Controls.Add(this.bnBrowse, 3, 1);
+            this.tableLayoutPanel1.Controls.Add(this.cbPostfix, 3, 2);
+            this.tableLayoutPanel1.Controls.Add(this.bnWorkTree, 3, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -98,7 +99,7 @@
             // 
             this.cbRepo.AllowDrop = true;
             this.cbRepo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.tableLayoutPanel1.SetColumnSpan(this.cbRepo, 4);
+            this.tableLayoutPanel1.SetColumnSpan(this.cbRepo, 5);
             this.cbRepo.FormattingEnabled = true;
             this.cbRepo.Location = new System.Drawing.Point(3, 4);
             this.cbRepo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -116,7 +117,7 @@
             this.cbCopyOriginal.AutoSize = true;
             this.cbCopyOriginal.Checked = true;
             this.cbCopyOriginal.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCopyOriginal.Location = new System.Drawing.Point(215, 143);
+            this.cbCopyOriginal.Location = new System.Drawing.Point(214, 143);
             this.cbCopyOriginal.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbCopyOriginal.Name = "cbCopyOriginal";
             this.cbCopyOriginal.Size = new System.Drawing.Size(67, 27);
@@ -127,7 +128,8 @@
             // tbReport
             // 
             this.tbReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.tableLayoutPanel1.SetColumnSpan(this.tbReport, 4);
+            this.tbReport.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tableLayoutPanel1.SetColumnSpan(this.tbReport, 5);
             this.tbReport.ContextMenuStrip = this.cmReport;
             this.tbReport.Location = new System.Drawing.Point(3, 193);
             this.tbReport.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -159,7 +161,7 @@
             this.bnIgnoreUnversioned.Location = new System.Drawing.Point(3, 43);
             this.bnIgnoreUnversioned.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnIgnoreUnversioned.Name = "bnIgnoreUnversioned";
-            this.bnIgnoreUnversioned.Size = new System.Drawing.Size(326, 42);
+            this.bnIgnoreUnversioned.Size = new System.Drawing.Size(324, 42);
             this.bnIgnoreUnversioned.TabIndex = 1;
             this.bnIgnoreUnversioned.Text = "Svn: ignore unversioned folders";
             this.bnIgnoreUnversioned.UseVisualStyleBackColor = true;
@@ -168,10 +170,10 @@
             // bnMergeChanges
             // 
             this.bnMergeChanges.ContextMenuStrip = this.cmCopy;
-            this.bnMergeChanges.Location = new System.Drawing.Point(169, 93);
+            this.bnMergeChanges.Location = new System.Drawing.Point(168, 93);
             this.bnMergeChanges.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnMergeChanges.Name = "bnMergeChanges";
-            this.bnMergeChanges.Size = new System.Drawing.Size(160, 42);
+            this.bnMergeChanges.Size = new System.Drawing.Size(159, 42);
             this.bnMergeChanges.TabIndex = 5;
             this.bnMergeChanges.Text = "Copy modified";
             this.bnMergeChanges.UseVisualStyleBackColor = true;
@@ -195,7 +197,7 @@
             // bnExplore
             // 
             this.bnExplore.ContextMenuStrip = this.cm;
-            this.bnExplore.Location = new System.Drawing.Point(472, 43);
+            this.bnExplore.Location = new System.Drawing.Point(474, 43);
             this.bnExplore.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnExplore.Name = "bnExplore";
             this.bnExplore.Size = new System.Drawing.Size(130, 42);
@@ -221,7 +223,7 @@
             // 
             // bnBrowse
             // 
-            this.bnBrowse.Location = new System.Drawing.Point(335, 43);
+            this.bnBrowse.Location = new System.Drawing.Point(337, 43);
             this.bnBrowse.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnBrowse.Name = "bnBrowse";
             this.bnBrowse.Size = new System.Drawing.Size(129, 42);
@@ -232,15 +234,15 @@
             // 
             // cbPostfix
             // 
-            this.cbPostfix.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.cbPostfix.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.tableLayoutPanel1.SetColumnSpan(this.cbPostfix, 2);
             this.cbPostfix.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.cbPostfix.ForeColor = System.Drawing.SystemColors.WindowText;
             this.cbPostfix.FormattingEnabled = true;
-            this.cbPostfix.Location = new System.Drawing.Point(335, 93);
+            this.cbPostfix.Location = new System.Drawing.Point(337, 98);
             this.cbPostfix.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbPostfix.Name = "cbPostfix";
-            this.cbPostfix.Size = new System.Drawing.Size(270, 32);
+            this.cbPostfix.Size = new System.Drawing.Size(268, 32);
             this.cbPostfix.TabIndex = 6;
             this.cbPostfix.SelectedIndexChanged += this.cbPostfix_SelectedIndexChanged;
             this.cbPostfix.TextChanged += this.cbPostfix_TextChanged;
@@ -249,7 +251,7 @@
             // bnWorkTree
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.bnWorkTree, 2);
-            this.bnWorkTree.Location = new System.Drawing.Point(335, 143);
+            this.bnWorkTree.Location = new System.Drawing.Point(337, 143);
             this.bnWorkTree.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.bnWorkTree.Name = "bnWorkTree";
             this.bnWorkTree.Size = new System.Drawing.Size(268, 42);
