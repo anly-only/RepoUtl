@@ -34,7 +34,7 @@ namespace cmd_ini
             sec.Set(CmdIni.Key.File, $"<374DE290-123F-4565-9164-39C4925E467B>");
 
             sec = ini.GetSection("Search *.sln");
-            sec.Set(CmdIni.Key.File, @"search-ms:query=*.sln&crumb=location:<root>\&");
+            sec.Set(CmdIni.Key.File, @"search-ms:query=.sln&crumb=location:<root>\&");
 
             string text = string.Join("\r\n", ini.GetText());
             return text;
