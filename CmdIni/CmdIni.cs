@@ -58,7 +58,7 @@ namespace cmd_ini
         }
 
         const string macroPattern = "<((?:\\w|-)+)>";
-        const string argumentPattern = "<(\\d+)>";
+
         Action<string> Report { get; }
 
         public ICmdMacros Macros { get; }
@@ -116,6 +116,7 @@ namespace cmd_ini
             {
                 string macro = match.Groups[1].Value;
                 string text = this.Macros.GetMacroText(macro);
+
                 if (string.IsNullOrEmpty(text))
                 {
                     text = macro;
@@ -196,13 +197,10 @@ namespace cmd_ini
             return ret;
         }
 
-        public IEnumerable<int> GetArguments(string args)
+        internal int ArgPathsCount(string args)
         {
-            var mm = Regex.Matches(args, argumentPattern);
-            foreach (Match m in mm)
-            {
-                yield return int.Parse(m.Groups[1].Value);
-            }
+            var mm = Regex.Matches(args, @"<(path2?)>"); // path or path2
+            return mm.Count;
         }
     }
 }

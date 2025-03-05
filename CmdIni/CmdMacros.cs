@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 namespace cmd_ini
 {
@@ -28,29 +27,6 @@ namespace cmd_ini
 
     public static class ICmdMacrosEx
     {
-        // add <1>, <2>, ...
-        public static void SetNumberedMacros(this ICmdMacros m, IEnumerable<string> args)
-        {
-            int ix = 1;
-            foreach (string a in args)
-            {
-                m.SetMacro(ix.ToString(), a);
-                ix++;
-            }
-        }
-
-        // remove <1>, <2>, ...
-        public static void RemoveNumberedMacros(this ICmdMacros m)
-        {
-            List<string> remove = [];
-
-            foreach (var a in m.Items)
-                if (Regex.IsMatch(a.key, @"^\d+$"))
-                    remove.Add(a.key);
-
-            foreach (var key in remove)
-                m.SetMacro(key, null);
-        }
     }
 
 

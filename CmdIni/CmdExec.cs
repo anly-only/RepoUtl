@@ -11,31 +11,32 @@ namespace cmd_ini
         public static void Execute(Cmd cmd, IEnumerable<string> selected, Control parent, Action<string> report)
         {
             int selCount = selected.Count();
-            var args = cmd.Ini.GetArguments(cmd.Args).ToArray();
-            if (args.Length == 0)
+            int pathsCount = cmd.Ini.ArgPathsCount(cmd.Args);
+            if (pathsCount == 0)
             {
                 Execute(cmd, parent, report);
             }
-            else if (args.Length == 1)
+            else if (pathsCount == 1)
             {
                 if (selCount == 0)
                     report?.Invoke("Ignored: nothing selected");
 
                 foreach (string path in selected)
                 {
-                    cmd.Ini.Macros.SetNumberedMacros(Enumerable.Repeat(path, 1));
+                    cmd.Ini.Macros.SetMacro("path", path);
                     Execute(cmd, parent, report);
-                    cmd.Ini.Macros.RemoveNumberedMacros();
                 }
+            }
+            else if (pathsCount == 2 && selected.Count() == 2)
+            {
+                cmd.Ini.Macros.SetMacro("path", selected.First());
+                cmd.Ini.Macros.SetMacro("path2", selected.Skip(1).First());
+                Execute(cmd, parent, report);
             }
             else
             {
-                if (report != null && args.Length != selCount)
+                if (report != null && pathsCount != selCount)
                     report.Invoke("The selected count doesn't match to the command arguments count");
-
-                cmd.Ini.Macros.SetNumberedMacros(selected);
-                Execute(cmd, parent, report);
-                cmd.Ini.Macros.RemoveNumberedMacros();
             }
         }
 
@@ -47,7 +48,7 @@ namespace cmd_ini
                 cmd.File = cmd.Ini.ApplyMacros(cmd.File);
                 cmd.Args = cmd.Ini.ApplyMacros(cmd.Args);
 
-                Process p = new Process();
+                var p = new Process();
                 p.StartInfo.FileName = cmd.File;
                 p.StartInfo.Arguments = cmd.Args;
                 p.StartInfo.UseShellExecute = true;
