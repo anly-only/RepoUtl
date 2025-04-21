@@ -161,13 +161,13 @@ namespace forms_ex
         // call from: protected override bool ProcessKeyPreview(ref Message m)
         internal static void ProcessKeyPreviewHandler(this Form f, ref Message m, Action escape, Action enter = null)
         {
-            if (m.Msg == /*WM_KEYDOWN*/ 0x0100)
+            if (m.Msg == /*WM_CHAR*/ 0x0102) // do not use WM_KEYDOWN to awoid beep by KEYUP
             {
-                if ((int)m.WParam == /*VK_ESCAPE*/0x1B)
+                if (((Keys)m.WParam == Keys.Escape))
                 {
                     escape?.Invoke();
                 }
-                else if ((int)m.WParam == /*VK_RETURN*/ 0x0D)
+                else if ((Keys)m.WParam == Keys.Enter)
                 {
                     enter?.Invoke();
                 }

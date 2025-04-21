@@ -115,15 +115,58 @@ namespace RepoUtl
                 },
                 () =>
                 {
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
+                    if (this.tbFilter.Focused)
+                    {
+                        this.SetFocusToList();
+                    }
+                    else
+                    {
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
                     processed = true;
                 });
+
+            if (!processed)
+            {
+                if (this.tbFilter.Focused)
+                {
+                    if (m.Msg == 0x100) // WM_KEYDOWN
+                    {
+                        if ((Keys)m.WParam == Keys.Down) // arrow down
+                        {
+                            this.SetFocusToList();
+                            processed = true;
+                        }
+                    }
+                }
+                else if (this.list.Focused)
+                {
+                    if (m.Msg == 0x100) // WM_KEYDOWN
+                    {
+                        if ((Keys)m.WParam == Keys.Up) // arrow up
+                        {
+                            if (list.SelectedIndices.Count == 1 && list.SelectedIndices[0] == 0)
+                            {
+                                tbFilter.Focus();
+                                processed = true;
+                            }
+                        }
+                    }
+                }
+            }
 
             if (!processed)
                 processed = base.ProcessKeyPreview(ref m);
 
             return processed;
+        }
+
+        void SetFocusToList()
+        {
+            list.Focus();
+            if (view.Count != 0 && list.SelectedIndices.Count == 0)
+                list.SelectedIndices.Add(0);
         }
     }
 }
