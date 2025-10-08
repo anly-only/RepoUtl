@@ -1,6 +1,8 @@
 ﻿using csutl;
 using csutl.ini;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace UnitTest
 {
@@ -13,7 +15,7 @@ namespace UnitTest
         [TestMethod]
         public void TestEmptyLines()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.BlankLineAfterSection = false;
 
             i.LoadIniBody($"");
@@ -29,7 +31,7 @@ namespace UnitTest
             Assert.IsTrue(i.Sections.First().Items.Count() == 1);
             var x = i.Sections.First().Items.First();
             Assert.IsTrue(x.Value == "" && x.Key == "" && x.Comment == "");
-            Assert.IsTrue(!x.IsValue && !x.IsKey && !x.IsComment);
+            Assert.IsTrue(!x.HasValue && !x.HasKey && !x.HasComment);
             Assert.IsFalse(i.Modified);
 
             i.LoadIniBody($"{n}{n}{n}");
@@ -39,7 +41,7 @@ namespace UnitTest
             foreach (var xx in i.Sections.First().Items)
             {
                 Assert.IsTrue(xx.Value == "" && xx.Key == "" && xx.Comment == "");
-                Assert.IsTrue(!xx.IsValue && !xx.IsKey && !xx.IsComment);
+                Assert.IsTrue(!xx.HasValue && !xx.HasKey && !xx.HasComment);
             }
             Assert.IsTrue(IsEQ(i.GetText(), "", "", ""));
             Assert.IsFalse(i.Modified);
@@ -49,7 +51,7 @@ namespace UnitTest
         [TestMethod]
         public void TestBlankLineAfterSection()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 4;
             i.Format.CommentAlignMaxPos = 0;
 
@@ -77,7 +79,7 @@ namespace UnitTest
         [TestMethod]
         public void TestEmptyLineAfterSection2()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.BlankLineAfterSection = true;
             i.Format.ItemIndent = 4;
             i.Format.CommentAlignMaxPos = 0;
@@ -114,7 +116,7 @@ namespace UnitTest
         [TestMethod]
         public void TestQuotes()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 4;
             i.Format.CommentAlignMaxPos = 0;
 
@@ -138,7 +140,7 @@ namespace UnitTest
         [TestMethod]
         public void TestEols()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 4;
             i.Format.CommentAlignMaxPos = 0;
 
@@ -162,7 +164,7 @@ namespace UnitTest
         [TestMethod]
         public void TestIndent()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 3;
             i.Format.SubItemIndent = 6;
 
@@ -197,7 +199,7 @@ namespace UnitTest
         [TestMethod]
         public void TestIndent2()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 3;
             i.Format.SubItemIndent = 6;
 
@@ -228,7 +230,7 @@ namespace UnitTest
         [TestMethod]
         public void TestGroups()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 3;
             i.Format.SubItemIndent = 6;
 
@@ -365,7 +367,7 @@ namespace UnitTest
         [TestMethod]
         public void TestFormatCommentAsItem()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             i.Format.ItemIndent = 3;
             i.Format.SubItemIndent = 6;
 
@@ -437,7 +439,7 @@ namespace UnitTest
         [TestMethod]
         public void TestAdd()
         {
-            var i = Factory.Get();
+            var i = IniFactory.Get();
             Assert.IsFalse(i.Modified);
 
             var s = i["aaa"];
