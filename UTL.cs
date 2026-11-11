@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace RepoUtl
@@ -12,10 +14,26 @@ namespace RepoUtl
         const int SW_RESTORE = 9;
         [System.Runtime.InteropServices.DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr handle);
+
         [System.Runtime.InteropServices.DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr handle, int nCmdShow);
+
         [System.Runtime.InteropServices.DllImport("User32.dll")]
         private static extern bool IsIconic(IntPtr handle);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        [DllImport("user32.dll")]
+        static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+        delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
 
         internal static string GetExistingFolder(string path)
@@ -49,19 +67,27 @@ namespace RepoUtl
             }
         }
 
-        static void KillExplorerWindow(string path)
+
+        public static void KillExplorerWindow(string _path)
         {
-            SHDocVw.ShellWindows ww = new SHDocVw.ShellWindows();
-            foreach (var item in ww.Cast<SHDocVw.InternetExplorer>().ToArray())
+            string path = Path.GetFileName(_path);
+            foreach (var p in Process.GetProcessesByName("explorer"))
             {
-                try
+                IntPtr h = p.MainWindowHandle;
+                if (h == IntPtr.Zero || !IsWindowVisible(h))
+                    continue;
+
+                var sb = new StringBuilder(1024);
+                GetWindowText(h, sb, sb.Capacity);
+
+                string title = sb.ToString();
+                int ix = title.IndexOf(" — ");
+                if (ix != -1)
+                    title = title.Substring(0, ix).Trim();
+
+                if (string.Compare(title, path, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    var u = new Uri(item.LocationURL);
-                    if (u.LocalPath == path)
-                        item.Quit();
-                }
-                catch
-                {
+                    p.Kill();
                 }
             }
         }
@@ -95,33 +121,62 @@ namespace RepoUtl
             return SetForegroundWindow(handle);
         }
 
-        internal static void CloseDuplicatedExplorerWindows()
+        public static void CloseDuplicatedExplorerWindows()
         {
-            try
-            {
-                SHDocVw.ShellWindows ww = new SHDocVw.ShellWindows();
-                var list = ww.Cast<SHDocVw.InternetExplorer>()
-                    .Reverse() // first new windows, then old windows
-                    .ToList();
+            IEnumerable<(Process Process, string Path)> windows = GetExplorerWindows();
 
-                for (int i = 0; i < list.Count - 1; i++)
+            // first new windows, then old windows
+            List<(Process Process, string Path)> list = windows.OrderByDescending(w => w.Process.StartTime).ToList();
+
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                var w1 = list[i];
+                for (int j = i + 1; j < list.Count; j++)
                 {
-                    var p1 = list[i];
-                    for (int j = i + 1; j < list.Count; j++)
+                    var w2 = list[j];
+                    if (string.Equals(w1.Path, w2.Path, StringComparison.OrdinalIgnoreCase))
                     {
-                        var p2 = list[j];
-                        if (p1.LocationURL == p2.LocationURL)
-                        {
-                            p2.Quit(); // kill old window
-                            list.RemoveAt(j);
-                            j--;
-                        }
+                        w2.Process.Kill();
+                        list.RemoveAt(j);
+                        j--;
                     }
                 }
             }
-            catch
+        }
+
+        private static IEnumerable<(Process Process, string Path)> GetExplorerWindows()
+        {
+            var result = new List<(Process, string)>();
+
+            EnumWindows((hWnd, lParam) =>
             {
-            }
+                if (!IsWindowVisible(hWnd))
+                    return true;
+
+                uint pid;
+                GetWindowThreadProcessId(hWnd, out pid);
+
+                var p = Process.GetProcessById((int)pid);
+                if (!string.Equals(p.ProcessName, "explorer", StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                var sb = new StringBuilder(1024);
+                GetWindowText(hWnd, sb, sb.Capacity);
+                string title = sb.ToString();
+
+                // Explorer показывает путь в заголовке
+                if (!string.IsNullOrEmpty(title))
+                {
+                    int ix = title.IndexOf(" — ");
+                    if (ix != -1)
+                        title = title.Substring(0, ix).Trim();
+                    result.Add((p, title));
+                }
+
+                return true;
+            }, IntPtr.Zero);
+
+            return result;
         }
 
         internal static bool Browse(string initialFolder, out string selectedFolder, string description = null)
