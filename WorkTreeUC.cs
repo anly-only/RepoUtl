@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RepoUtl
@@ -133,11 +134,11 @@ namespace RepoUtl
             this.ScanAndUpdate();
         }
 
-        void bnAdd_Click(object sender, EventArgs e)
+        async void bnAdd_Click(object sender, EventArgs e)
         {
             try
             {
-                this.AddWorkTree();
+                await this.AddWorkTree();
                 this.ScanAndUpdate();
             }
             catch (Exception ee)
@@ -146,7 +147,7 @@ namespace RepoUtl
             }
         }
 
-        void AddWorkTree()
+        async Task AddWorkTree()
         {
             string tmpFile = Path.GetTempFileName();
             tmpFile = Path.ChangeExtension(tmpFile, "bat");
@@ -154,33 +155,39 @@ namespace RepoUtl
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
+                this.Enabled = false; // avoid double-clicks while the batch runs
+
                 var sb = new StringBuilder();
 
                 var name = this.Worktree.Name;
-                var disc = Path.GetPathRoot(this.RepoWorkingCopyPath);
-                disc = disc.Substring(0, disc.Length - 1);
-                sb.AppendLine($"{disc}");
-                sb.AppendLine($"cd {this.RepoWorkingCopyPath}");
-                sb.AppendLine($"git worktree add ..\\{name} {this.Worktree.Branch.FriendlyName}");
+                var disk = Path.GetPathRoot(this.RepoWorkingCopyPath);
+                disk = disk.Substring(0, disk.Length - 1);
+                sb.AppendLine($"{disk}");
+                sb.AppendLine($"cd \"{this.RepoWorkingCopyPath}\"");
+                sb.AppendLine($"git worktree add \"..\\{name}\" \"{this.Worktree.Branch.FriendlyName}\"");
+                sb.AppendLine($"if errorlevel 1 goto :error");
                 sb.AppendLine($"");
 
                 var localBranch = this.Worktree.Branch.FriendlyName.Replace("origin/", string.Empty);
                 var path = Path.Combine(Path.GetDirectoryName(this.RepoWorkingCopyPath), name);
-                sb.AppendLine($"cd {path}");
-                sb.AppendLine($"git branch {localBranch} -t {this.Worktree.Branch.FriendlyName}");
+                sb.AppendLine($"cd \"{path}\"");
+                sb.AppendLine($"git branch \"{localBranch}\" -t \"{this.Worktree.Branch.FriendlyName}\"");
+                sb.AppendLine($"if errorlevel 1 goto :error");
                 sb.AppendLine($"");
 
                 path = Path.Combine(Path.GetDirectoryName(this.RepoWorkingCopyPath), name);
-                sb.AppendLine($"cd {path}");
-                sb.AppendLine($"git switch {localBranch}");
-                sb.AppendLine($"");
+                sb.AppendLine($"cd \"{path}\"");
+                sb.AppendLine($"git switch \"{localBranch}\"");
+                sb.AppendLine($"if errorlevel 1 goto :error");
+                sb.AppendLine($"exit /b 0");
+                sb.AppendLine($":error");
+                sb.AppendLine($"echo An error occurred. Press any key to close...");
+                sb.AppendLine($"pause >nul");
 
-                sb.AppendLine($"PAUSE");
                 var text = sb.ToString();
                 File.WriteAllText(tmpFile, text);
 
-                var p = Process.Start("cmd.exe", $"/C {tmpFile}");
-                p.WaitForExit();
+                await this.RunBatFile(tmpFile);
             }
             catch (Exception ee)
             {
@@ -188,18 +195,29 @@ namespace RepoUtl
             }
             finally
             {
+                this.Enabled = true;
                 File.Delete(tmpFile);
                 Cursor.Current = Cursors.Default;
             }
         }
 
-        void bnDelete_Click(object sender, EventArgs e)
+        // run cmd.exe with the batch file, without blocking the UI thread
+        async Task RunBatFile(string batFile)
+        {
+            var psi = new ProcessStartInfo("cmd.exe", $"/C \"{batFile}\"");
+            using (var p = Process.Start(psi))
+            {
+                await p.WaitForExitAsync();
+            }
+        }
+
+        async void bnDelete_Click(object sender, EventArgs e)
         {
             try
             {
                 if (MessageBox.Show($"Remove worktree '{this.Worktree.Name}' ?", "Remove work tree", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3) == DialogResult.Yes)
                 {
-                    this.RemoveWorkTree();
+                    await this.RemoveWorkTree();
                     this.ScanAndUpdate();
                 }
             }
@@ -209,30 +227,35 @@ namespace RepoUtl
             }
         }
 
-        void RemoveWorkTree()
+        async Task RemoveWorkTree()
         {
-            string tmpFile = Path.GetTempFileName();
-            tmpFile = Path.ChangeExtension(tmpFile, "bat");
+            string tmpFile = Path.Combine(
+                Path.GetTempPath(),
+                "RepoUtl_" + Path.GetRandomFileName() + ".bat");
 
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
+                this.Enabled = false; // avoid double-clicks while the batch runs
+
                 var sb = new StringBuilder();
 
                 var name = this.Worktree.Name;
-                var disc = Path.GetPathRoot(this.RepoWorkingCopyPath);
-                disc = disc.Substring(0, disc.Length - 1);
-                sb.AppendLine($"{disc}");
-                sb.AppendLine($"cd {this.RepoWorkingCopyPath}");
-                sb.AppendLine($"git worktree remove {this.Worktree.Name}");
-                sb.AppendLine($"");
+                var disk = Path.GetPathRoot(this.RepoWorkingCopyPath);
+                disk = disk.Substring(0, disk.Length - 1);
+                sb.AppendLine($"{disk}");
+                sb.AppendLine($"cd \"{this.RepoWorkingCopyPath}\"");
+                sb.AppendLine($"git worktree remove \"{this.Worktree.Name}\"");
+                sb.AppendLine($"if errorlevel 1 goto :error");
+                sb.AppendLine($"exit /b 0");
+                sb.AppendLine($":error");
+                sb.AppendLine($"echo An error occurred. Press any key to close...");
+                sb.AppendLine($"pause >nul");
 
-                sb.AppendLine($"PAUSE");
                 var text = sb.ToString();
                 File.WriteAllText(tmpFile, text);
 
-                var p = Process.Start("cmd.exe", $"/C {tmpFile}");
-                p.WaitForExit();
+                await this.RunBatFile(tmpFile);
             }
             catch (Exception ee)
             {
@@ -240,6 +263,7 @@ namespace RepoUtl
             }
             finally
             {
+                this.Enabled = true;
                 File.Delete(tmpFile);
                 Cursor.Current = Cursors.Default;
             }

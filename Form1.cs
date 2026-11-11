@@ -15,8 +15,8 @@ namespace RepoUtl
 {
     public partial class Form1 : Form
     {
-        int minWidth => bnMergeChanges.Right + bnWorkTree.Width + 30;
-        int minHeight => tbReport.Top + 100;
+        int minWidth => this.bnMergeChanges.Right + this.bnWorkTree.Width + 30;
+        int minHeight => this.tbReport.Top + 100;
 
         ToolTip toolTip = new ToolTip();
         const string basePostfix = "-base";

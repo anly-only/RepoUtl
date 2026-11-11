@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace cmd_ini
 {
     public static class CmdExec
     {
-        public static void Execute(Cmd cmd, IEnumerable<string> selected, Control parent, Action<string> report)
+        public static async void Execute(Cmd cmd, IEnumerable<string> selected, Control parent, Action<string> report)
         {
             int selCount = selected.Count();
             int pathsCount = cmd.Ini.ArgPathsCount(cmd.Args);
             if (pathsCount == 0)
             {
-                Execute(cmd, parent, report);
+                await Execute(cmd, parent, report);
             }
             else if (pathsCount == 1)
             {
@@ -24,14 +25,14 @@ namespace cmd_ini
                 foreach (string path in selected)
                 {
                     cmd.Ini.Macros.SetMacro("path", path);
-                    Execute(cmd, parent, report);
+                    await Execute(cmd, parent, report);
                 }
             }
             else if (pathsCount == 2 && selected.Count() == 2)
             {
                 cmd.Ini.Macros.SetMacro("path", selected.First());
                 cmd.Ini.Macros.SetMacro("path2", selected.Skip(1).First());
-                Execute(cmd, parent, report);
+                await Execute(cmd, parent, report);
             }
             else
             {
@@ -40,7 +41,7 @@ namespace cmd_ini
             }
         }
 
-        static void Execute(Cmd cmd, Control parent, Action<string> report)
+        static async Task Execute(Cmd cmd, Control parent, Action<string> report)
         {
             try
             {
@@ -58,7 +59,8 @@ namespace cmd_ini
                 {
                     if (parent != null)
                         parent.Enabled = false;
-                    p.WaitForExit();
+                    // wait without blocking the UI thread
+                    await p.WaitForExitAsync();
                 }
             }
             catch (Exception ee)

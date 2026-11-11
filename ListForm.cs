@@ -146,9 +146,9 @@ namespace RepoUtl
                     {
                         if ((Keys)m.WParam == Keys.Up) // arrow up
                         {
-                            if (list.SelectedIndices.Count == 1 && list.SelectedIndices[0] == 0)
+                            if (this.list.SelectedIndices.Count == 1 && this.list.SelectedIndices[0] == 0)
                             {
-                                tbFilter.Focus();
+                                this.tbFilter.Focus();
                                 processed = true;
                             }
                         }
@@ -164,9 +164,9 @@ namespace RepoUtl
 
         void SetFocusToList()
         {
-            list.Focus();
-            if (view.Count != 0 && list.SelectedIndices.Count == 0)
-                list.SelectedIndices.Add(0);
+            this.list.Focus();
+            if (this.view.Count != 0 && this.list.SelectedIndices.Count == 0)
+                this.list.SelectedIndices.Add(0);
         }
     }
 }

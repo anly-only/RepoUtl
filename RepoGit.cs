@@ -68,7 +68,7 @@ namespace RepoUtl
 
                         using (var r = new StreamReader(contentStream))
                         {
-                            using (var w = File.OpenWrite(target))
+                            using (var w = File.Create(target))
                             {
                                 r.BaseStream.CopyTo(w);
                             }
@@ -151,9 +151,9 @@ namespace RepoUtl
             return ret;
         }
 
-        internal static string GetWorktreePath(string repoWorkingCopyPath, string worktrreName)
+        internal static string GetWorktreePath(string repoWorkingCopyPath, string worktreeName)
         {
-            return Path.Combine(Path.GetDirectoryName(repoWorkingCopyPath), worktrreName);
+            return Path.Combine(Path.GetDirectoryName(repoWorkingCopyPath), worktreeName);
         }
 
         class RepoItemGit : RepoItem
