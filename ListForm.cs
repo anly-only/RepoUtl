@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace RepoUtl
@@ -60,11 +61,13 @@ namespace RepoUtl
 
         void updateView()
         {
-            string s = this.tbFilter.Text;
+            string s = Regex.Replace(this.tbFilter.Text.Trim(), " +", ".*");
+
+            var rgx = new Regex(s, RegexOptions.IgnoreCase);
 
             this.view = s.IsEmpty()
                 ? this.items.ToList()
-                : this.items.Where(a => this.DisplayText(a).Contains(s, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                : this.items.Where(a => rgx.IsMatch(this.DisplayText(a))).ToList();
 
             this.list.VirtualListSize = this.view.Count;
             this.list.Invalidate();
